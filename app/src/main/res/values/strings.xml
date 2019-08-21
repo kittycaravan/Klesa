@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">클레사</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">카미너스</string>
+    <string name="nav_header_subtitle">Lv.1 모험가 HP(10/10) MP(10/10) Str 8,Dex 7,Int 6,Wis 7,Chr 10,Luk 8</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+
+    <string name="menu_div_player">플레이어 정보</string>
+
+    <string name="menu_player_equip">장비</string>
+    <string name="menu_player_belogings">소지품</string>
+
+
+    <string name="menu_div_party">파티 정보</string>
+    <string name="menu_party_1">파티 1</string>
+
+    <string name="menu_div_base">거점 정보</string>
+
+    <string name="menu_div_current">현황 정보</string>
+
+    <string name="menu_current_table_forces">세력표</string>
+    <string name="menu_current_map">맵</string>
+    <string name="menu_send">거점</string>
+</resources>

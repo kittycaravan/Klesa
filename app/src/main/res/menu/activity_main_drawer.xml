@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 0.2.2 - 네비게이션 드로워 영역 - (메뉴) -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" tools:showIn="navigation_view">
+    <item android:id="@+id/nav_home" android:icon="@drawable/ic_menu_camera" android:title="@string/menu_home" />
+    <item android:title="@string/menu_div_player">
+        <menu>
+            <item android:id="@+id/nav_player_equip" android:icon="@drawable/ic_menu_gallery" android:title="@string/menu_player_equip" />
+            <item android:id="@+id/nav_player_belogings" android:icon="@drawable/ic_menu_slideshow" android:title="@string/menu_player_belogings" />
+        </menu>
+    </item>
+    <item android:title="@string/menu_div_party">
+        <menu>
+            <item android:id="@+id/nav_send" android:icon="@drawable/ic_menu_send" android:title="@string/menu_party_1" />
+        </menu>
+    </item>
+    <item android:title="@string/menu_div_base">
+        <menu>
+            <item android:id="@+id/nav_send4" android:icon="@drawable/ic_menu_send" android:title="@string/menu_send" />
+        </menu>
+    </item>
+    <item android:title="@string/menu_div_current">
+        <menu>
+            <item android:id="@+id/nav_tools" android:icon="@drawable/ic_menu_manage" android:title="@string/menu_current_map" />
+            <item android:id="@+id/nav_share" android:icon="@drawable/ic_menu_share" android:title="@string/menu_current_table_forces" />
+        </menu>
+    </item>
+</menu>

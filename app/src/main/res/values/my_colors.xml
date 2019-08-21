@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="my_red">       #FF0000     </color>
+    <color name="my_orange">    #FF8000     </color>
+    <color name="my_yellow">    #FFFF00     </color>
+    <color name="my_green">     #00FF00     </color>
+    <color name="my_blue">      #0000FF     </color>
+    <color name="my_pink">      #FF00FF     </color>
+    <color name="my_purple">    #BF00FF     </color>
+    <color name="my_gray">      #3C3F41     </color>
+    <color name="my_black">     #000000     </color>
+    <color name="my_white">     #FFFFFF     </color>
+
+    <color name="my_1st">      #E06666   </color>
+    <color name="my_2st">      #FF9900   </color>
+    <color name="my_3st">      #FFFF00   </color>
+    <color name="my_tip">      #FFCE42   </color>
+    <color name="my_data">     #00FF00   </color>
+    <color name="my_source">   #93C47D   </color>
+    <color name="my_fact">     #A4C2F4   </color>
+    <color name="my_kitty">    #D790FF   </color>
+    <color name="my_ex">       #D790FF   </color>
+</resources>
