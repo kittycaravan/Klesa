@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/my_kitty" android:orientation="horizontal" android:gravity="center_vertical">
+    <!-- 타이틀 -->
+    <TextView android:id="@+id/tool_bar_custom_title" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="야아옹"/>
+    <!-- 턴수 표시 -->
+    <TextView android:id="@+id/tool_bar_custom_current_tern" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="2" android:gravity="right" android:text="123 턴"/>
+    <!-- 턴 넘기기 버튼 -->
+    <TextView android:id="@+id/tool_bar_custom_turn_over" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="right"
+        android:layout_marginRight="10dp"
+        android:text="턴 넘기기\n[1 턴]"/>
+
+</LinearLayout>
