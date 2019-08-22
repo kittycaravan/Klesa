@@ -8,10 +8,12 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.peisia.klesa.fragment.FragmentBase;
 import com.peisia.klesa.fragment.FragmentBelogings;
 import com.peisia.klesa.fragment.FragmentEquip;
 import com.peisia.klesa.fragment.FragmentHome;
 import com.peisia.klesa.fragment.FragmentMap;
+import com.peisia.klesa.fragment.FragmentTableForces;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
@@ -56,7 +58,10 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             changeFragment(new FragmentBelogings());
         } else if (id == R.id.nav_map) {
             changeFragment(new FragmentMap());
+        } else if (id == R.id.nav_base) {
+            changeFragment(new FragmentBase());
         } else if (id == R.id.nav_current_table_forces) {
+            changeFragment(new FragmentTableForces());
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
