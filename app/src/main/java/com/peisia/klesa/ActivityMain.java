@@ -5,18 +5,26 @@ import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.peisia.klesa.fragment.FragmentBelogings;
+import com.peisia.klesa.fragment.FragmentEquip;
+import com.peisia.klesa.fragment.FragmentHome;
+import com.peisia.klesa.fragment.FragmentMap;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-public class ActivityMain extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private FragmentManager mFm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mFm = getSupportFragmentManager();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -26,6 +34,7 @@ public class ActivityMain extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+        changeFragment(new FragmentHome());
     }
     @Override
     public void onBackPressed() {
@@ -36,21 +45,24 @@ public class ActivityMain extends AppCompatActivity
             super.onBackPressed();
         }
     }
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
         if (id == R.id.nav_home) {
-            // Handle the camera action
+            changeFragment(new FragmentHome());
         } else if (id == R.id.nav_player_equip) {
+            changeFragment(new FragmentEquip());
         } else if (id == R.id.nav_player_belogings) {
+            changeFragment(new FragmentBelogings());
         } else if (id == R.id.nav_map) {
+            changeFragment(new FragmentMap());
         } else if (id == R.id.nav_current_table_forces) {
-        } else if (id == R.id.nav_party) {
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    private void changeFragment(Fragment fragment){
+        mFm.beginTransaction().replace(R.id.main_frame, fragment).commit();
     }
 }
