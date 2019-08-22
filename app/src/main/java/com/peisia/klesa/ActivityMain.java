@@ -45,9 +45,9 @@ public class ActivityMain extends AppCompatActivity
             // Handle the camera action
         } else if (id == R.id.nav_player_equip) {
         } else if (id == R.id.nav_player_belogings) {
-        } else if (id == R.id.nav_tools) {
-        } else if (id == R.id.nav_share) {
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_map) {
+        } else if (id == R.id.nav_current_table_forces) {
+        } else if (id == R.id.nav_party) {
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
