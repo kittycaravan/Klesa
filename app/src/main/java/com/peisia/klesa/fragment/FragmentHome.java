@@ -41,9 +41,11 @@ public class FragmentHome extends Fragment {
         ButterKnife.bind(this, view);
         Log.v("hoyangi","==== 여긴가");
 
-        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay("야옹이")));
-        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay("호양이")));
-        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay("우리야옹이")));
+        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay("헬로 야옹이 월드에 오신것을 환영합니다.")));
+        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay("당신의 이름은 호양이 입니다.")));
+        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay("당신의 직업은 백수 입니다.")));
+        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay("당신의 레벨은 1 입니다.")));
+        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay("당신의 성별은 남성 입니다.")));
 
         mAdapterRecyclerInfoDisplay = new AdapterRecyclerInfoDisplay(mItems);
         mLlm = new LinearLayoutManager(getContext());
