@@ -47,7 +47,6 @@ public class FragmentHome extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        Log.v("hoyangi","==== 여긴가");
         initKeyboard();
 
 //        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay("야옹이")));
@@ -63,15 +62,6 @@ public class FragmentHome extends Fragment {
     private void initKeyboard(){
         imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(mEt, 0);
-
-/*        mEt.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                Log.v("ASM","==== ==== 일단 키 부터 찍어보자 :"+keyCode);
-                return false;
-            }
-        });*/
-
         mEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -84,9 +74,9 @@ public class FragmentHome extends Fragment {
                         case R.id.fm_home_et:
                             String inputText = v.getText().toString();
                             Log.v("ASM","==== ==== 입력 값:"+inputText);
-                            Log.v("ASM","==== ==== 이벤트도 확인하자:"+event.getAction());
-                            Log.v("ASM","==== ==== actionId도 확인하자:"+actionId);
-                            displayInputText(inputText);
+                            //todo 입력값에 따른 처리 (ex. ㄷ 동 이동)
+                            procUserTextInput(inputText);
+//                            displayInputText(inputText);
                             clearInputText();
                             reOpenKeyboard();
                             break;
@@ -95,6 +85,27 @@ public class FragmentHome extends Fragment {
                 return false;
             }
         });
+    }
+    private void procUserTextInput(String inputText) {
+        switch(inputText){
+            case "e":
+            case "ㄷ":
+                procPlayerMoveEast();
+                break;
+            case "w":
+            case "ㅅ":
+                procPlayerMoveWest();
+                break;
+            case "s":
+            case "ㄴ":
+                procPlayerMoveSouth();
+                break;
+            case "n":
+            case "ㅂ":
+                procPlayerMoveNorth();
+                break;
+        }
+
     }
     private void displayInputText(String inputText) {
         mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay(inputText)));
@@ -107,10 +118,25 @@ public class FragmentHome extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.v("ASM","==== ==== 여기 오지?");
                 mEt.requestFocus();
                 imm.showSoftInput(mEt, 0);
             }
         },100); //1000, 500, 200
+    }
+    private void procPlayerMoveEast(){
+        //todo 실 좌표 이동
+        displayInputText("동쪽으로 이동했습니다.");   // 표시
+    }
+    private void procPlayerMoveWest(){
+        //todo 실 좌표 이동
+        displayInputText("서쪽으로 이동했습니다.");   // 표시
+    }
+    private void procPlayerMoveNorth(){
+        //todo 실 좌표 이동
+        displayInputText("북쪽으로 이동했습니다.");   // 표시
+    }
+    private void procPlayerMoveSouth(){
+        //todo 실 좌표 이동
+        displayInputText("남쪽으로 이동했습니다.");   // 표시
     }
 }
