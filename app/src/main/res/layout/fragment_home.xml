@@ -3,13 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/myPurple">
+    android:background="@color/myBlack">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fm_home_rv_info_display"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="@dimen/fragment_home_disp_height"
         app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/my_white_purple"
         />
     <EditText
         android:id="@+id/fm_home_et"

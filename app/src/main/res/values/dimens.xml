@@ -5,4 +5,7 @@
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <!-- 플먼 - 홈 by sm.ahn -->
+    <dimen name="fragment_home_disp_height">220dp</dimen>
 </resources>
