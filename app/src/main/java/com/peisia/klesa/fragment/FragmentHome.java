@@ -1,9 +1,16 @@
 package com.peisia.klesa.fragment;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,11 +31,18 @@ import butterknife.ButterKnife;
  * Created by 호양이 on 2019-08-22.
  */
 public class FragmentHome extends Fragment {
-    @BindView(R.id.fm_home_rv_info_display)
-    RecyclerView mRv;
+    @BindView(R.id.fm_home_rv_info_display) RecyclerView mRv;
+    @BindView(R.id.fm_home_et) EditText mEt;
     private LinearLayoutManager mLlm;
     AdapterRecyclerInfoDisplay mAdapterRecyclerInfoDisplay;
     ArrayList<ListItemInfoDisplay> mItems = new ArrayList<>();
+
+    InputMethodManager imm;
+
+    private String mLastInputText;
+    private int mX; // mCoordinateX, 좌표 X
+    private int mY; // mCoordinateY, 좌표 y
+    private int mZ; // mCoordinateZ, 좌표 z
 
     @Nullable
     @Override
@@ -39,17 +53,116 @@ public class FragmentHome extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        Log.v("hoyangi","==== 여긴가");
-
-        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay("헬로 야옹이 월드에 오신것을 환영합니다.")));
-        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay("당신의 이름은 호양이 입니다.")));
-        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay("당신의 직업은 백수 입니다.")));
-        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay("당신의 레벨은 1 입니다.")));
-        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay("당신의 성별은 남성 입니다.")));
-
+        inits();    // 각종 초기화들
         mAdapterRecyclerInfoDisplay = new AdapterRecyclerInfoDisplay(mItems);
         mLlm = new LinearLayoutManager(getContext());
         mRv.setLayoutManager(mLlm);
         mRv.setAdapter(mAdapterRecyclerInfoDisplay);
+    }
+    private void inits() {
+        initKeyboard();
+        initPlayerXYZ();
+    }
+    private void initKeyboard(){
+        imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(mEt, 0);
+        mEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                // 주의. 전송(엔터) 누른 경우 이 onEditorAction 이 두번일어난다.
+                // 한번은 event 가 null 인 채로 오고
+                // 두번째는 event 가 있는 상태로 온다.
+                // 따라서 아래처럼 null 이 아닐 때의 처리로 분기해야한다.
+                if(event != null){
+                    String inputText = v.getText().toString();
+                    if(TextUtils.isEmpty(inputText)){
+                        inputText = mLastInputText; // 공백 입력시 마지막 입력으로 대체한다.
+                    } else {
+                        mLastInputText = inputText; // 입력 편의를 위해 마지막 입력을 기억해두기
+                    }
+                    switch (v.getId()){
+                        case R.id.fm_home_et:
+                            Log.v("ASM","==== ==== 입력 값:"+inputText);
+                            procUserTextInput(inputText);   // 입력값에 따른 처리 (ex. ㄷ 동 이동)
+                            clearInputText();
+                            reOpenKeyboard();
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
+    }
+    private void procUserTextInput(String inputText) {
+        switch(inputText){
+            case "e":
+            case "ㄷ":
+                procPlayerMoveEast();
+                break;
+            case "w":
+            case "ㅅ":
+                procPlayerMoveWest();
+                break;
+            case "s":
+            case "ㄴ":
+                procPlayerMoveSouth();
+                break;
+            case "n":
+            case "ㅂ":
+                procPlayerMoveNorth();
+                break;
+        }
+
+    }
+    private void displayText(String s) {
+        mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay(s)));
+        mAdapterRecyclerInfoDisplay.notifyDataSetChanged();
+        scrollEnd();
+    }
+    private void clearInputText() {
+        mEt.setText("");
+    }
+    private void reOpenKeyboard() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mEt.requestFocus();
+                imm.showSoftInput(mEt, 0);
+            }
+        },100); //1000, 500, 200
+    }
+    private void procPlayerMoveEast(){
+        //todo 실 좌표 이동
+        displayText("동쪽으로 이동했습니다.");   // 표시
+        mX++;
+    }
+    private void procPlayerMoveWest(){
+        //todo 실 좌표 이동
+        displayText("서쪽으로 이동했습니다.");   // 표시
+        mX--;
+    }
+    private void procPlayerMoveNorth(){
+        //todo 실 좌표 이동
+        displayText("북쪽으로 이동했습니다.");   // 표시
+        mY++;
+    }
+    private void procPlayerMoveSouth(){
+        //todo 실 좌표 이동
+        displayText("남쪽으로 이동했습니다.");   // 표시
+        mY--;
+    }
+    private void scrollEnd(){
+        mRv.scrollToPosition(mAdapterRecyclerInfoDisplay.getItemCount()-1); // 스크롤을 자동으로 맨 밑으로 가도록 처리
+    }
+    private void initPlayerXYZ(){
+        mX = 0;
+        mY = 0;
+        mZ = 0;
+    }
+    private void displayRoom(int x, int y, int z){
+
+    }
+    private void displayRoom(){
+
     }
 }

@@ -4,4 +4,19 @@
     <color name="colorPrimary">@color/my_kitty</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <!-- 성모 색상 by sm.ahn -->
+    <color name="myRed">#E06666</color>
+    <color name="myOrange">#FF9900</color>
+    <color name="myYellow">#FFFF00</color>
+    <color name="myGold">#FFCE42</color>
+    <color name="myGreen">#00FF00</color>
+    <color name="myWhiteGreen">#93C47D</color>
+    <color name="myBlue">#A4C2F4</color>
+    <color name="myPink">#D790FF</color>
+    <color name="myPurple">#A3A7D6</color>
+
+    <color name="myWhite">#FFFFFF</color>
+    <color name="myBlack">#000000</color>
+    <!-- 성모 색상 by sm.ahn -->
 </resources>
