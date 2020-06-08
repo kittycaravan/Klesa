@@ -1,5 +1,6 @@
 package com.peisia.klesa.fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -18,8 +19,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.peisia.klesa.MyApp;
 import com.peisia.klesa.R;
 import com.peisia.klesa.data.Player;
+import com.peisia.klesa.service.ServiceWorldTime;
 import com.peisia.klesa.ui.adapter.AdapterRecyclerInfoDisplay;
 import com.peisia.klesa.ui.listdata.ListDataInfoDisplay;
 import com.peisia.klesa.ui.listitem.ListItemInfoDisplay;
@@ -34,6 +37,7 @@ import butterknife.ButterKnife;
  * Created by 호양이 on 2019-08-22.
  */
 public class FragmentHome extends Fragment {
+    private Context mContext;
     @BindView(R.id.fm_home_rv_info_display) RecyclerView mRv;
     @BindView(R.id.fm_home_et) EditText mEt;
     private LinearLayoutManager mLlm;
@@ -58,12 +62,14 @@ public class FragmentHome extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mContext = getContext();
         ButterKnife.bind(this, view);
         inits();    // 각종 초기화들
         mAdapterRecyclerInfoDisplay = new AdapterRecyclerInfoDisplay(mItems);
         mLlm = new LinearLayoutManager(getContext());
         mRv.setLayoutManager(mLlm);
         mRv.setAdapter(mAdapterRecyclerInfoDisplay);
+        startServiceWorldTime();    // 세계 시간을 시작
     }
     private void inits() {
         initLoadMap();     // 로드   : 방정보
@@ -206,5 +212,12 @@ public class FragmentHome extends Fragment {
     private void initLoadPlayer(){
         mPlayer = new Player(10, 8, 3, 100, 50, 30);
         mPlayer.setCodeXyz(1111);
+    }
+
+    private void startServiceWorldTime(){
+        Intent intent = new Intent(mContext, ServiceWorldTime.class);
+//        Intent intent = new Intent(getContext(), ServiceWorldTime.class);
+        intent.putExtra(MyApp.INTENT_KEY_CMD, MyApp.INTENT_VALUE_START_WORLD_TIME);
+        mContext.startService(intent);
     }
 }
