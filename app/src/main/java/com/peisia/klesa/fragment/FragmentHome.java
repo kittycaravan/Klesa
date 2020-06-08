@@ -140,19 +140,15 @@ public class FragmentHome extends Fragment {
         },100); //1000, 500, 200
     }
     private void procPlayerMoveEast(){
-        displayText(getString(R.string.dp_player_move_e));   // 표시
         procMatchingRoom(1,0,0);
     }
     private void procPlayerMoveWest(){
-        displayText(getString(R.string.dp_player_move_w));   // 표시
         procMatchingRoom(-1, 0, 0);
     }
     private void procPlayerMoveNorth(){
-        displayText(getString(R.string.dp_player_move_n));   // 표시
         procMatchingRoom(0, 1, 0);
     }
     private void procPlayerMoveSouth(){
-        displayText(getString(R.string.dp_player_move_s));   // 표시
         procMatchingRoom(0, -1, 0);
     }
     private void scrollEnd(){
@@ -180,19 +176,19 @@ public class FragmentHome extends Fragment {
             mX = mX + x;
             mY = mY + y;
             mZ = mZ + z;
-            displayPlayerMove(x, y, z); //todo
+            displayPlayerMove(x, y, z);
             displayRoom(UtilKlesaMap.xyzToXyzCode(mX, mY, mZ));  // 이동한 새 방 설명 표시 처리
         }
     }
     private void displayPlayerMove(int x, int y, int z) {
         if(x == 1){
-
+            displayText(getString(R.string.dp_player_move_e));   // 표시
         } else if(x == -1) {
-
+            displayText(getString(R.string.dp_player_move_w));   // 표시
         } else if(y == 1) {
-
+            displayText(getString(R.string.dp_player_move_n));   // 표시
         } else if(y == -1) {
-
+            displayText(getString(R.string.dp_player_move_s));   // 표시
         } else if(z == 1) {
 
         } else if(z == -1) {
