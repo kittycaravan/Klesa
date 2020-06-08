@@ -140,27 +140,19 @@ public class FragmentHome extends Fragment {
         },100); //1000, 500, 200
     }
     private void procPlayerMoveEast(){
-        //todo 실 좌표 이동
-        displayText("동쪽으로 이동했습니다.");   // 표시
-//        procMatchingRoom(++mX, mY, mZ);
+        displayText(getString(R.string.dp_player_move_e));   // 표시
         procMatchingRoom(1,0,0);
     }
     private void procPlayerMoveWest(){
-        //todo 실 좌표 이동
-        displayText("서쪽으로 이동했습니다.");   // 표시
-//        procMatchingRoom(--mX, mY, mZ);
+        displayText(getString(R.string.dp_player_move_w));   // 표시
         procMatchingRoom(-1, 0, 0);
     }
     private void procPlayerMoveNorth(){
-        //todo 실 좌표 이동
-        displayText("북쪽으로 이동했습니다.");   // 표시
-//        procMatchingRoom(mX, ++mY, mZ);
+        displayText(getString(R.string.dp_player_move_n));   // 표시
         procMatchingRoom(0, 1, 0);
     }
     private void procPlayerMoveSouth(){
-        //todo 실 좌표 이동
-        displayText("남쪽으로 이동했습니다.");   // 표시
-//        procMatchingRoom(mX, --mY, mZ);
+        displayText(getString(R.string.dp_player_move_s));   // 표시
         procMatchingRoom(0, -1, 0);
     }
     private void scrollEnd(){
@@ -174,24 +166,39 @@ public class FragmentHome extends Fragment {
     private void displayRoom(long xyzCode){
         displayText(mMap.get(xyzCode));
     }
-    //todo 방좌표 코드와 매칭하여 방찾기
+    /** 방좌표 코드와 매칭하여 방찾기 */
     private void procMatchingRoom(int x, int y, int z) {
         long inputCodeXyz = 1 * 1000  // 당분간 고정 값 1
                 + (mX + x) * 100
                 + (mY + y) * 10
                 + (mZ + z) * 1;
-        //todo 탐색
+        ////    탐색
         Log.v("ASM","==== ==== 널이냐 공백이냐? 널이네:" + mMap.get(inputCodeXyz));
         if(mMap.get(inputCodeXyz) == null){
             displayText("이동 할 수 없네용");
-        } else {    // todo 좌표 반영
+        } else {    // 좌표 반영
             mX = mX + x;
             mY = mY + y;
             mZ = mZ + z;
+            displayPlayerMove(x, y, z); //todo
             displayRoom(UtilKlesaMap.xyzToXyzCode(mX, mY, mZ));  // 이동한 새 방 설명 표시 처리
         }
     }
+    private void displayPlayerMove(int x, int y, int z) {
+        if(x == 1){
 
+        } else if(x == -1) {
+
+        } else if(y == 1) {
+
+        } else if(y == -1) {
+
+        } else if(z == 1) {
+
+        } else if(z == -1) {
+
+        }
+    }
     private void initLoadMap(){
         mMap = new HashMap<>();
         mMap.put(1111L, "연습장 입구");
