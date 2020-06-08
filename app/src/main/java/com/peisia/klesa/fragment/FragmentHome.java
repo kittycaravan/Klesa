@@ -23,7 +23,7 @@ import com.peisia.klesa.data.Player;
 import com.peisia.klesa.ui.adapter.AdapterRecyclerInfoDisplay;
 import com.peisia.klesa.ui.listdata.ListDataInfoDisplay;
 import com.peisia.klesa.ui.listitem.ListItemInfoDisplay;
-import com.peisia.klesa.util.UtilKlesaMap;
+import com.peisia.klesa.util.klesa.UtilKlesaMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;

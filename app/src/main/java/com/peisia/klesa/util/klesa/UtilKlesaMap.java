@@ -1,4 +1,4 @@
-package com.peisia.klesa.util;
+package com.peisia.klesa.util.klesa;
 public class UtilKlesaMap {
     static public long xyzToXyzCode(int x, int y, int z){
         return (long)(1 * 1000
