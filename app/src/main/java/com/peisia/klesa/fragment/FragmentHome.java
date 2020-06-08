@@ -19,9 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.peisia.klesa.R;
+import com.peisia.klesa.data.Player;
 import com.peisia.klesa.ui.adapter.AdapterRecyclerInfoDisplay;
 import com.peisia.klesa.ui.listdata.ListDataInfoDisplay;
 import com.peisia.klesa.ui.listitem.ListItemInfoDisplay;
+import com.peisia.klesa.util.UtilKlesaMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,9 +47,9 @@ public class FragmentHome extends Fragment {
     private int mY; // mCoordinateY, 좌표 y
     private int mZ; // mCoordinateZ, 좌표 z
 
-    private HashMap<Integer, String> mMap;
-    private int mCurrentMapXyz;
-
+    private HashMap<Long, String> mMap;
+    private long mCurrentXyz;
+    private Player mPlayer;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,7 +66,8 @@ public class FragmentHome extends Fragment {
         mRv.setAdapter(mAdapterRecyclerInfoDisplay);
     }
     private void inits() {
-        initLoadRoomData(); // 로드 : 방정보
+        initLoadMap();     // 로드   : 방정보
+        initLoadPlayer();   // 로드   : 플레이어
         initKeyboard();
         initPlayerXYZ();
     }
@@ -167,43 +170,38 @@ public class FragmentHome extends Fragment {
         mX = 1;
         mY = 1;
         mZ = 1;
-//        mX = 0;
-//        mY = 0;
-//        mZ = 0;
     }
-    private void displayRoom(int xyzCode){
+    private void displayRoom(long xyzCode){
         displayText(mMap.get(xyzCode));
-    }
-    private int xyzToXyzCode(int x, int y, int z){
-        return 1 * 1000
-                + x * 100
-                + y * 10
-                + z * 1;
     }
     //todo 방좌표 코드와 매칭하여 방찾기
     private void procMatchingRoom(int x, int y, int z) {
-        int inputMapXyz = 1 * 1000  // 당분간 고정 값 1
+        long inputCodeXyz = 1 * 1000  // 당분간 고정 값 1
                 + (mX + x) * 100
                 + (mY + y) * 10
                 + (mZ + z) * 1;
         //todo 탐색
-        Log.v("ASM","==== ==== 널이냐 공백이냐? 널이네:" + mMap.get(inputMapXyz));
-        if(mMap.get(inputMapXyz) == null){
+        Log.v("ASM","==== ==== 널이냐 공백이냐? 널이네:" + mMap.get(inputCodeXyz));
+        if(mMap.get(inputCodeXyz) == null){
             displayText("이동 할 수 없네용");
         } else {    // todo 좌표 반영
             mX = mX + x;
             mY = mY + y;
             mZ = mZ + z;
-            displayRoom(xyzToXyzCode(mX, mY, mZ));  // 이동한 새 방 설명 표시 처리
+            displayRoom(UtilKlesaMap.xyzToXyzCode(mX, mY, mZ));  // 이동한 새 방 설명 표시 처리
         }
     }
 
-    private void initLoadRoomData(){
+    private void initLoadMap(){
         mMap = new HashMap<>();
-        mMap.put(1111, "연습장 입구");
-        mMap.put(1211, "연습장 남서쪽");
-        mMap.put(1221, "연습장 북서쪽");
-        mMap.put(1321, "연습장 북동쪽");
-        mMap.put(1311, "연습장 남동쪽");
+        mMap.put(1111L, "연습장 입구");
+        mMap.put(1211L, "연습장 남서쪽");
+        mMap.put(1221L, "연습장 북서쪽");
+        mMap.put(1321L, "연습장 북동쪽");
+        mMap.put(1311L, "연습장 남동쪽");
+    }
+    private void initLoadPlayer(){
+        mPlayer = new Player(10, 8, 3, 100, 50, 30);
+        mPlayer.setCodeXyz(1111);
     }
 }
