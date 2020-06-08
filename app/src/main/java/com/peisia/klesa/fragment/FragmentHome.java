@@ -24,6 +24,7 @@ import com.peisia.klesa.ui.listdata.ListDataInfoDisplay;
 import com.peisia.klesa.ui.listitem.ListItemInfoDisplay;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,6 +45,9 @@ public class FragmentHome extends Fragment {
     private int mY; // mCoordinateY, 좌표 y
     private int mZ; // mCoordinateZ, 좌표 z
 
+    private HashMap<Integer, String> mMap;
+    private int mCurrentMapXyz;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -60,6 +64,7 @@ public class FragmentHome extends Fragment {
         mRv.setAdapter(mAdapterRecyclerInfoDisplay);
     }
     private void inits() {
+        initLoadRoomData(); // 로드 : 방정보
         initKeyboard();
         initPlayerXYZ();
     }
@@ -134,35 +139,71 @@ public class FragmentHome extends Fragment {
     private void procPlayerMoveEast(){
         //todo 실 좌표 이동
         displayText("동쪽으로 이동했습니다.");   // 표시
-        mX++;
+//        procMatchingRoom(++mX, mY, mZ);
+        procMatchingRoom(1,0,0);
     }
     private void procPlayerMoveWest(){
         //todo 실 좌표 이동
         displayText("서쪽으로 이동했습니다.");   // 표시
-        mX--;
+//        procMatchingRoom(--mX, mY, mZ);
+        procMatchingRoom(-1, 0, 0);
     }
     private void procPlayerMoveNorth(){
         //todo 실 좌표 이동
         displayText("북쪽으로 이동했습니다.");   // 표시
-        mY++;
+//        procMatchingRoom(mX, ++mY, mZ);
+        procMatchingRoom(0, 1, 0);
     }
     private void procPlayerMoveSouth(){
         //todo 실 좌표 이동
         displayText("남쪽으로 이동했습니다.");   // 표시
-        mY--;
+//        procMatchingRoom(mX, --mY, mZ);
+        procMatchingRoom(0, -1, 0);
     }
     private void scrollEnd(){
         mRv.scrollToPosition(mAdapterRecyclerInfoDisplay.getItemCount()-1); // 스크롤을 자동으로 맨 밑으로 가도록 처리
     }
     private void initPlayerXYZ(){
-        mX = 0;
-        mY = 0;
-        mZ = 0;
+        mX = 1;
+        mY = 1;
+        mZ = 1;
+//        mX = 0;
+//        mY = 0;
+//        mZ = 0;
     }
-    private void displayRoom(int x, int y, int z){
-
+    private void displayRoom(int xyzCode){
+        displayText(mMap.get(xyzCode));
     }
-    private void displayRoom(){
+    private int xyzToXyzCode(int x, int y, int z){
+        return 1 * 1000
+                + x * 100
+                + y * 10
+                + z * 1;
+    }
+    //todo 방좌표 코드와 매칭하여 방찾기
+    private void procMatchingRoom(int x, int y, int z) {
+        int inputMapXyz = 1 * 1000  // 당분간 고정 값 1
+                + (mX + x) * 100
+                + (mY + y) * 10
+                + (mZ + z) * 1;
+        //todo 탐색
+        Log.v("ASM","==== ==== 널이냐 공백이냐? 널이네:" + mMap.get(inputMapXyz));
+        if(mMap.get(inputMapXyz) == null){
+            displayText("이동 할 수 없네용");
+        } else {    // todo 좌표 반영
+            mX = mX + x;
+            mY = mY + y;
+            mZ = mZ + z;
+            displayRoom(xyzToXyzCode(mX, mY, mZ));  // 이동한 새 방 설명 표시 처리
+        }
+    }
 
+    private void initLoadRoomData(){
+        mMap = new HashMap<>();
+        mMap.put(1111, "연습장 입구");
+        mMap.put(1211, "연습장 남서쪽");
+        mMap.put(1221, "연습장 북서쪽");
+        mMap.put(1321, "연습장 북동쪽");
+        mMap.put(1311, "연습장 남동쪽");
     }
 }
