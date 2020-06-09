@@ -1,5 +1,6 @@
 package com.peisia.klesa.fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -18,12 +19,18 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.peisia.klesa.ActivityMain;
+import com.peisia.klesa.MyApp;
 import com.peisia.klesa.R;
+import com.peisia.klesa.data.Player;
+import com.peisia.klesa.service.ServiceWorldTime;
 import com.peisia.klesa.ui.adapter.AdapterRecyclerInfoDisplay;
 import com.peisia.klesa.ui.listdata.ListDataInfoDisplay;
 import com.peisia.klesa.ui.listitem.ListItemInfoDisplay;
+import com.peisia.klesa.util.klesa.UtilKlesaMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +38,7 @@ import butterknife.ButterKnife;
  * Created by 호양이 on 2019-08-22.
  */
 public class FragmentHome extends Fragment {
+    private Context mContext;
     @BindView(R.id.fm_home_rv_info_display) RecyclerView mRv;
     @BindView(R.id.fm_home_et) EditText mEt;
     private LinearLayoutManager mLlm;
@@ -44,6 +52,9 @@ public class FragmentHome extends Fragment {
     private int mY; // mCoordinateY, 좌표 y
     private int mZ; // mCoordinateZ, 좌표 z
 
+    private HashMap<Long, String> mMap;
+    private long mCurrentXyz;
+    private Player mPlayer;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -52,14 +63,18 @@ public class FragmentHome extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mContext = getContext();
         ButterKnife.bind(this, view);
         inits();    // 각종 초기화들
         mAdapterRecyclerInfoDisplay = new AdapterRecyclerInfoDisplay(mItems);
         mLlm = new LinearLayoutManager(getContext());
         mRv.setLayoutManager(mLlm);
         mRv.setAdapter(mAdapterRecyclerInfoDisplay);
+        startServiceWorldTime();    // 세계 시간을 시작
     }
     private void inits() {
+        initLoadMap();     // 로드   : 방정보
+        initLoadPlayer();   // 로드   : 플레이어
         initKeyboard();
         initPlayerXYZ();
     }
@@ -132,37 +147,82 @@ public class FragmentHome extends Fragment {
         },100); //1000, 500, 200
     }
     private void procPlayerMoveEast(){
-        //todo 실 좌표 이동
-        displayText("동쪽으로 이동했습니다.");   // 표시
-        mX++;
+        procMatchingRoom(1,0,0);
     }
     private void procPlayerMoveWest(){
-        //todo 실 좌표 이동
-        displayText("서쪽으로 이동했습니다.");   // 표시
-        mX--;
+        procMatchingRoom(-1, 0, 0);
     }
     private void procPlayerMoveNorth(){
-        //todo 실 좌표 이동
-        displayText("북쪽으로 이동했습니다.");   // 표시
-        mY++;
+        procMatchingRoom(0, 1, 0);
     }
     private void procPlayerMoveSouth(){
-        //todo 실 좌표 이동
-        displayText("남쪽으로 이동했습니다.");   // 표시
-        mY--;
+        procMatchingRoom(0, -1, 0);
     }
     private void scrollEnd(){
         mRv.scrollToPosition(mAdapterRecyclerInfoDisplay.getItemCount()-1); // 스크롤을 자동으로 맨 밑으로 가도록 처리
     }
     private void initPlayerXYZ(){
-        mX = 0;
-        mY = 0;
-        mZ = 0;
+        mX = 1;
+        mY = 1;
+        mZ = 1;
     }
-    private void displayRoom(int x, int y, int z){
-
+    private void displayRoom(long xyzCode){
+        displayText(mMap.get(xyzCode));
     }
-    private void displayRoom(){
+    /** 방좌표 코드와 매칭하여 방찾기 */
+    private void procMatchingRoom(int x, int y, int z) {
+        long inputCodeXyz = 1 * 1000  // 당분간 고정 값 1
+                + (mX + x) * 100
+                + (mY + y) * 10
+                + (mZ + z) * 1;
+        ////    탐색
+        Log.v("ASM","==== ==== 널이냐 공백이냐? 널이네:" + mMap.get(inputCodeXyz));
+        if(mMap.get(inputCodeXyz) == null){
+            displayText("이동 할 수 없네용");
+        } else {    // 좌표 반영
+            mX = mX + x;
+            mY = mY + y;
+            mZ = mZ + z;
+            displayPlayerMove(x, y, z);
+            displayRoom(UtilKlesaMap.xyzToXyzCode(mX, mY, mZ));  // 이동한 새 방 설명 표시 처리
+        }
+    }
+    private void displayPlayerMove(int x, int y, int z) {
+        if(x == 1){
+            displayText(getString(R.string.dp_player_move_e));   // 표시
+        } else if(x == -1) {
+            displayText(getString(R.string.dp_player_move_w));   // 표시
+        } else if(y == 1) {
+            displayText(getString(R.string.dp_player_move_n));   // 표시
+        } else if(y == -1) {
+            displayText(getString(R.string.dp_player_move_s));   // 표시
+        } else if(z == 1) {
 
+        } else if(z == -1) {
+
+        }
+    }
+    private void initLoadMap(){
+        mMap = new HashMap<>();
+        mMap.put(1111L, "연습장 입구");
+        mMap.put(1211L, "연습장 남서쪽");
+        mMap.put(1221L, "연습장 북서쪽");
+        mMap.put(1321L, "연습장 북동쪽");
+        mMap.put(1311L, "연습장 남동쪽");
+    }
+    private void initLoadPlayer(){
+        mPlayer = new Player(10, 8, 3, 100, 50, 30);
+        mPlayer.setCodeXyz(1111);
+    }
+
+    private void startServiceWorldTime(){
+        Intent intent = new Intent(mContext, ServiceWorldTime.class);
+        intent.putExtra(MyApp.INTENT_KEY_SERVICE_CMD, MyApp.INTENT_VALUE_SERVICE_START_WORLD_TIME);
+        mContext.startService(intent);
+        mContext.bindService(intent, ((ActivityMain)mContext).getConnection(), Context.BIND_AUTO_CREATE);
+    }
+
+    public void displayTickGodness(){
+        displayText(getString(R.string.dp_info_tick_godness));
     }
 }
