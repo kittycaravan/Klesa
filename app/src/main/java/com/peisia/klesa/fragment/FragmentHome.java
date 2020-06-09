@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.peisia.klesa.ActivityMain;
 import com.peisia.klesa.MyApp;
 import com.peisia.klesa.R;
 import com.peisia.klesa.data.Player;
@@ -216,8 +217,12 @@ public class FragmentHome extends Fragment {
 
     private void startServiceWorldTime(){
         Intent intent = new Intent(mContext, ServiceWorldTime.class);
-//        Intent intent = new Intent(getContext(), ServiceWorldTime.class);
-        intent.putExtra(MyApp.INTENT_KEY_CMD, MyApp.INTENT_VALUE_START_WORLD_TIME);
+        intent.putExtra(MyApp.INTENT_KEY_SERVICE_CMD, MyApp.INTENT_VALUE_SERVICE_START_WORLD_TIME);
         mContext.startService(intent);
+        mContext.bindService(intent, ((ActivityMain)mContext).getConnection(), Context.BIND_AUTO_CREATE);
+    }
+
+    public void displayTickGodness(){
+        displayText(getString(R.string.dp_info_tick_godness));
     }
 }
