@@ -1,3 +1,4 @@
 <resources>
-    <string name="dp_info_tick_godness">틱선녀의 고운 목소리가 들립니다. \"곧 틱이 옵니다~\"</string>
+    <string name="dp_info_tick_goddess_prepare">틱선녀의 고운 목소리가 들립니다. \"곧 틱이 옵니다~\"</string>
+    <string name="dp_info_tick_goddess">틱선녀의 고운 목소리가 들립니다. \"틱입니다~\"</string>
 </resources>

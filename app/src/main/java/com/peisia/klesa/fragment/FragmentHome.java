@@ -39,6 +39,7 @@ import butterknife.ButterKnife;
  */
 public class FragmentHome extends Fragment {
     private Context mContext;
+    private MyApp mMyApp;
     @BindView(R.id.fm_home_rv_info_display) RecyclerView mRv;
     @BindView(R.id.fm_home_et) EditText mEt;
     private LinearLayoutManager mLlm;
@@ -64,6 +65,7 @@ public class FragmentHome extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mContext = getContext();
+        mMyApp = (MyApp)((ActivityMain)mContext).getApplication();
         ButterKnife.bind(this, view);
         inits();    // 각종 초기화들
         mAdapterRecyclerInfoDisplay = new AdapterRecyclerInfoDisplay(mItems);
@@ -223,6 +225,23 @@ public class FragmentHome extends Fragment {
     }
 
     public void displayTickGodness(){
-        displayText(getString(R.string.dp_info_tick_godness));
+        displayText(getString(R.string.dp_info_tick_goddess));
+    }
+    public void displayTickGodnessPrepare(){
+        displayText(getString(R.string.dp_info_tick_goddess_prepare));
+    }
+    /** 월드 시간 업데이트에 대한 처리 */
+    public void procWorldTimeUpdate(){
+        ////    틱선녀 처리
+        long currentWorldTime = mMyApp.getmWorldTime();
+        if(currentWorldTime != 0){
+            ////    틱선녀 처리 - 1.틱 5초전 알림
+            if((currentWorldTime/MyApp.WORLD_TIME_TERM_MS) % MyApp.WORLD_TIME_TERM_TICK_SEC == 0) {
+                displayTickGodness();
+            ////    틱선녀 처리 - 2.틱 지남 알림
+            } else if(((currentWorldTime/MyApp.WORLD_TIME_TERM_MS) + MyApp.WORLD_TIME_TERM_TICK_PREPARE_SEC) % MyApp.WORLD_TIME_TERM_TICK_SEC == 0){
+                displayTickGodnessPrepare();
+            }
+        }
     }
 }
