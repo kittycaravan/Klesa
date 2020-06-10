@@ -25,5 +25,4 @@
     <string name="menu_current_table_forces">세력표</string>
     <string name="menu_current_map">맵</string>
     <string name="menu_base">기지</string>
-    <string name="dp_info_status_form">[100/100,50/50,30/30]</string>
 </resources>

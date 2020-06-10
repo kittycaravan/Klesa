@@ -42,6 +42,7 @@ public class FragmentHome extends Fragment {
     private MyApp mMyApp;
     @BindView(R.id.fm_home_rv_info_display) RecyclerView mRv;
     @BindView(R.id.fm_home_et) EditText mEt;
+    @BindView(R.id.fm_home_status_cl_tv) TextView mStatus;
     private LinearLayoutManager mLlm;
     AdapterRecyclerInfoDisplay mAdapterRecyclerInfoDisplay;
     ArrayList<ListItemInfoDisplay> mItems = new ArrayList<>();
@@ -214,7 +215,8 @@ public class FragmentHome extends Fragment {
         mMap.put(1311L, "연습장 남동쪽");
     }
     private void initLoadPlayer(){
-        mPlayer = new Player(10, 8, 3, 100, 50, 30);
+//        mPlayer = new Player(10, 8, 3, 100, 50, 30);
+        mPlayer = new Player(10, 8, 3, 100, 50, 30, 1, 1, 1);
         mPlayer.setCodeXyz(1111);
     }
 
@@ -231,19 +233,21 @@ public class FragmentHome extends Fragment {
     public void displayTickGodnessPrepare(){
         displayText(getString(R.string.dp_info_tick_goddess_prepare));
     }
-    /** 월드 시간 업데이트에 대한 처리 */
+    /** 월드 시간 업데이트에 대한 처리. 즉 1초마다 할일 */
     public void procWorldTimeUpdate(){
         procTimeTick();
         //todo 또 뭘 처리할까. 이것저것 다 해야될껄?
+        procTimeStatus();
     }
     private void procTimeTick(){
         ////    틱선녀 처리
         long currentWorldTime = mMyApp.getmWorldTime();
         if(currentWorldTime != 0){
-            ////    틱선녀 처리 - 1.틱 5초전 알림
+            ////    틱선녀 처리 - 2.틱 지남 알림
             if((currentWorldTime/MyApp.WORLD_TIME_TERM_MS) % MyApp.WORLD_TIME_TERM_TICK_SEC == 0) {
+                procPlayerRecoverByTick();
                 displayTickGodness();
-                ////    틱선녀 처리 - 2.틱 지남 알림
+                ////    틱선녀 처리 - 1.틱 5초전 알림
             } else if(((currentWorldTime/MyApp.WORLD_TIME_TERM_MS) + MyApp.WORLD_TIME_TERM_TICK_PREPARE_SEC) % MyApp.WORLD_TIME_TERM_TICK_SEC == 0){
                 displayTickGodnessPrepare();    //todo 백그라운드 내려가있을 때의 예외처리 해야함. 안그럼 죽어 자꾸. 아니면 백 상태에서 서비스가 안돌게 하던지.
             }
@@ -251,5 +255,37 @@ public class FragmentHome extends Fragment {
     }
     private void displayIntroduceWorld(){
         displayText(getString(R.string.dp_info_world_enter));
+    }
+    /** 상태 처리.(상태창 갱신 등) */
+    private void procTimeStatus(){
+        int playerCurrentHp = mPlayer.getHpCurrent();
+        int playerMaxHp = mPlayer.getHpMax();
+        int playerCurrentMp = mPlayer.getMpCurrent();
+        int playerMaxMp = mPlayer.getMpMax();
+        int playerCurrentVp = mPlayer.getVpCurrent();
+        int playerMaxVp = mPlayer.getVpMax();
+        mStatus.setText(String.format(getString(R.string.dp_info_status_form), playerCurrentHp,playerMaxHp,playerCurrentMp,playerMaxMp,playerCurrentVp,playerMaxVp));
+    }
+
+    private void procPlayerRecoverByTick(){
+        ////    todo 플레이어 회복 처리
+        int hpCurrent = mPlayer.getHpCurrent() + MyApp.PLAYER_TICK_RECOVER_HP_POINT;
+        int mpCurrent = mPlayer.getMpCurrent() + MyApp.PLAYER_TICK_RECOVER_MP_POINT;
+        int vpCurrent = mPlayer.getVpCurrent() + MyApp.PLAYER_TICK_RECOVER_VP_POINT;
+        int hpMax = mPlayer.getHpMax();
+        int mpMax = mPlayer.getMpMax();
+        int vpMax = mPlayer.getVpMax();
+        if(hpCurrent > hpMax){
+            hpCurrent = hpMax;
+        }
+        if(mpCurrent > mpMax){
+            mpCurrent = mpMax;
+        }
+        if(vpCurrent > vpMax){
+            vpCurrent = vpMax;
+        }
+        mPlayer.setHpCurrent(hpCurrent);
+        mPlayer.setMpCurrent(mpCurrent);
+        mPlayer.setVpCurrent(vpCurrent);
     }
 }

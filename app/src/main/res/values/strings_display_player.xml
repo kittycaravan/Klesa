@@ -7,4 +7,6 @@
     <string name="dp_player_move_d">밑쪽으로 이동했습니다.</string>
     <!-- 월드 소개(입장 시) by sm.ahn -->
     <string name="dp_info_world_enter">***************************************************\n********************** Klesa ***********************\n***************************************************\n클레사 월드에 입장했습니다.</string>
+<!--    <string name="dp_info_status_form">[100/100,50/50,30/30]</string>    -->
+    <string name="dp_info_status_form">[%d/%d,%d/%d,%d/%d]</string>
 </resources>

@@ -3,17 +3,32 @@ public class Player {
     private int str;
     private int dex;
     private int iq;
-    private int hp;
-    private int mp;
-    private int vp;
+    private int hpMax;
+    private int mpMax;
+    private int vpMax;
+    private int hpCurrent;
+    private int mpCurrent;
+    private int vpCurrent;
     private int codeXyz;
-    public Player(int str, int dex, int iq, int hp, int mp, int vp) {
+
+    public Player(int str, int dex, int iq, int hpMax, int mpMax, int vpMax) {
         this.str = str;
         this.dex = dex;
         this.iq = iq;
-        this.hp = hp;
-        this.mp = mp;
-        this.vp = vp;
+        this.hpMax = hpMax;
+        this.mpMax = mpMax;
+        this.vpMax = vpMax;
+    }
+    public Player(int str, int dex, int iq, int hpMax, int mpMax, int vpMax, int hpCurrent, int mpCurrent, int vpCurrent) {
+        this.str = str;
+        this.dex = dex;
+        this.iq = iq;
+        this.hpMax = hpMax;
+        this.mpMax = mpMax;
+        this.vpMax = vpMax;
+        this.hpCurrent = hpCurrent;
+        this.mpCurrent = mpCurrent;
+        this.vpCurrent = vpCurrent;
     }
     @Override
     public String toString() {
@@ -21,9 +36,9 @@ public class Player {
                 "str=" + str +
                 ", dex=" + dex +
                 ", iq=" + iq +
-                ", hp=" + hp +
-                ", mp=" + mp +
-                ", vp=" + vp +
+                ", hpMax=" + hpMax +
+                ", mpMax=" + mpMax +
+                ", vpMax=" + vpMax +
                 '}';
     }
     public int getStr() {
@@ -44,28 +59,46 @@ public class Player {
     public void setIq(int iq) {
         this.iq = iq;
     }
-    public int getHp() {
-        return hp;
+    public int getHpMax() {
+        return hpMax;
     }
-    public void setHp(int hp) {
-        this.hp = hp;
+    public void setHpMax(int hpMax) {
+        this.hpMax = hpMax;
     }
-    public int getMp() {
-        return mp;
+    public int getMpMax() {
+        return mpMax;
     }
-    public void setMp(int mp) {
-        this.mp = mp;
+    public void setMpMax(int mpMax) {
+        this.mpMax = mpMax;
     }
-    public int getVp() {
-        return vp;
+    public int getVpMax() {
+        return vpMax;
     }
-    public void setVp(int vp) {
-        this.vp = vp;
+    public void setVpMax(int vpMax) {
+        this.vpMax = vpMax;
     }
     public int getCodeXyz() {
         return codeXyz;
     }
     public void setCodeXyz(int codeXyz) {
         this.codeXyz = codeXyz;
+    }
+    public int getHpCurrent() {
+        return hpCurrent;
+    }
+    public void setHpCurrent(int hpCurrent) {
+        this.hpCurrent = hpCurrent;
+    }
+    public int getMpCurrent() {
+        return mpCurrent;
+    }
+    public void setMpCurrent(int mpCurrent) {
+        this.mpCurrent = mpCurrent;
+    }
+    public int getVpCurrent() {
+        return vpCurrent;
+    }
+    public void setVpCurrent(int vpCurrent) {
+        this.vpCurrent = vpCurrent;
     }
 }

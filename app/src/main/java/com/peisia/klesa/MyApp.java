@@ -7,7 +7,11 @@ public class MyApp extends Application {
     static public final String INTENT_VALUE_SERVICE_TIME_NOTICE_TO_ACTIVITY = "INTENT_VALUE_SERVICE_TIME_NOTICE_TO_ACTIVITY";
     static public final long WORLD_TIME_TERM_MS = 1000L;
     static public final long WORLD_TIME_TERM_TICK_SEC = 30L;
-    static public final long WORLD_TIME_TERM_TICK_PREPARE_SEC = 5L;
+    static public final long WORLD_TIME_TERM_TICK_PREPARE_SEC = 10L;
+    ////    플레이어
+    static public final int PLAYER_TICK_RECOVER_HP_POINT = 20;
+    static public final int PLAYER_TICK_RECOVER_MP_POINT = 5;
+    static public final int PLAYER_TICK_RECOVER_VP_POINT = 10;
 
     private long mWorldTime = 0L;    // 초기값 0 ms
     public long getmWorldTime() {
