@@ -72,6 +72,7 @@ public class FragmentHome extends Fragment {
         mLlm = new LinearLayoutManager(getContext());
         mRv.setLayoutManager(mLlm);
         mRv.setAdapter(mAdapterRecyclerInfoDisplay);
+        displayIntroduceWorld();    // 대문 표시
         startServiceWorldTime();    // 세계 시간을 시작
     }
     private void inits() {
@@ -232,16 +233,23 @@ public class FragmentHome extends Fragment {
     }
     /** 월드 시간 업데이트에 대한 처리 */
     public void procWorldTimeUpdate(){
+        procTimeTick();
+        //todo 또 뭘 처리할까. 이것저것 다 해야될껄?
+    }
+    private void procTimeTick(){
         ////    틱선녀 처리
         long currentWorldTime = mMyApp.getmWorldTime();
         if(currentWorldTime != 0){
             ////    틱선녀 처리 - 1.틱 5초전 알림
             if((currentWorldTime/MyApp.WORLD_TIME_TERM_MS) % MyApp.WORLD_TIME_TERM_TICK_SEC == 0) {
                 displayTickGodness();
-            ////    틱선녀 처리 - 2.틱 지남 알림
+                ////    틱선녀 처리 - 2.틱 지남 알림
             } else if(((currentWorldTime/MyApp.WORLD_TIME_TERM_MS) + MyApp.WORLD_TIME_TERM_TICK_PREPARE_SEC) % MyApp.WORLD_TIME_TERM_TICK_SEC == 0){
                 displayTickGodnessPrepare();
             }
         }
+    }
+    private void displayIntroduceWorld(){
+        displayText(getString(R.string.dp_info_world_enter));
     }
 }
