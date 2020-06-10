@@ -9,4 +9,5 @@
     <string name="dp_info_world_enter">***************************************************\n********************** Klesa ***********************\n***************************************************\n클레사 월드에 입장했습니다.</string>
 <!--    <string name="dp_info_status_form">[100/100,50/50,30/30]</string>    -->
     <string name="dp_info_status_form">[%d/%d,%d/%d,%d/%d]</string>
+    <string name="dp_info_status_vp_zero">힘들어서 못가용</string>
 </resources>

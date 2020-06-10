@@ -181,14 +181,20 @@ public class FragmentHome extends Fragment {
                 + (mZ + z) * 1;
         ////    탐색
         Log.v("ASM","==== ==== 널이냐 공백이냐? 널이네:" + mMap.get(inputCodeXyz));
-        if(mMap.get(inputCodeXyz) == null){
+        if(mMap.get(inputCodeXyz) == null) {
             displayText("이동 할 수 없네용");
         } else {    // 좌표 반영
-            mX = mX + x;
-            mY = mY + y;
-            mZ = mZ + z;
-            displayPlayerMove(x, y, z);
-            displayRoom(UtilKlesaMap.xyzToXyzCode(mX, mY, mZ));  // 이동한 새 방 설명 표시 처리
+            ////    vp 가 없으면 이동 못하게 처리, 있으면 처리
+            if(mPlayer.getVpCurrent() < 1){
+                displayText(getString(R.string.dp_info_status_vp_zero));
+            } else {
+                procPlayerStatus(0, 0, -1); // vp 1 감소 처리
+                mX = mX + x;
+                mY = mY + y;
+                mZ = mZ + z;
+                displayPlayerMove(x, y, z);
+                displayRoom(UtilKlesaMap.xyzToXyzCode(mX, mY, mZ));  // 이동한 새 방 설명 표시 처리
+            }
         }
     }
     private void displayPlayerMove(int x, int y, int z) {
@@ -266,12 +272,32 @@ public class FragmentHome extends Fragment {
         int playerMaxVp = mPlayer.getVpMax();
         mStatus.setText(String.format(getString(R.string.dp_info_status_form), playerCurrentHp,playerMaxHp,playerCurrentMp,playerMaxMp,playerCurrentVp,playerMaxVp));
     }
-
+    /** 플레이어 회복 처리 */
     private void procPlayerRecoverByTick(){
-        ////    todo 플레이어 회복 처리
         int hpCurrent = mPlayer.getHpCurrent() + MyApp.PLAYER_TICK_RECOVER_HP_POINT;
         int mpCurrent = mPlayer.getMpCurrent() + MyApp.PLAYER_TICK_RECOVER_MP_POINT;
         int vpCurrent = mPlayer.getVpCurrent() + MyApp.PLAYER_TICK_RECOVER_VP_POINT;
+        int hpMax = mPlayer.getHpMax();
+        int mpMax = mPlayer.getMpMax();
+        int vpMax = mPlayer.getVpMax();
+        if(hpCurrent > hpMax){
+            hpCurrent = hpMax;
+        }
+        if(mpCurrent > mpMax){
+            mpCurrent = mpMax;
+        }
+        if(vpCurrent > vpMax){
+            vpCurrent = vpMax;
+        }
+        mPlayer.setHpCurrent(hpCurrent);
+        mPlayer.setMpCurrent(mpCurrent);
+        mPlayer.setVpCurrent(vpCurrent);
+    }
+    /** 플레이어 스탯 가감 */
+    private void procPlayerStatus(int addHp, int addMp, int addVp){
+        int hpCurrent = mPlayer.getHpCurrent() + addHp;
+        int mpCurrent = mPlayer.getMpCurrent() + addMp;
+        int vpCurrent = mPlayer.getVpCurrent() + addVp;
         int hpMax = mPlayer.getHpMax();
         int mpMax = mPlayer.getMpMax();
         int vpMax = mPlayer.getVpMax();
