@@ -245,7 +245,7 @@ public class FragmentHome extends Fragment {
                 displayTickGodness();
                 ////    틱선녀 처리 - 2.틱 지남 알림
             } else if(((currentWorldTime/MyApp.WORLD_TIME_TERM_MS) + MyApp.WORLD_TIME_TERM_TICK_PREPARE_SEC) % MyApp.WORLD_TIME_TERM_TICK_SEC == 0){
-                displayTickGodnessPrepare();
+                displayTickGodnessPrepare();    //todo 백그라운드 내려가있을 때의 예외처리 해야함. 안그럼 죽어 자꾸. 아니면 백 상태에서 서비스가 안돌게 하던지.
             }
         }
     }

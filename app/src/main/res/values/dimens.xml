@@ -7,5 +7,7 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <!-- 플먼 - 홈 by sm.ahn -->
-    <dimen name="fragment_home_disp_height">220dp</dimen>
+<!--    <dimen name="fragment_home_disp_height">220dp</dimen>-->
+    <dimen name="fragment_home_disp_height">196dp</dimen>
+    <dimen name="fm_home_status_height">24dp</dimen>
 </resources>
