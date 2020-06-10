@@ -18,7 +18,7 @@ public class ServiceWorldTime extends Service {
     private Messenger mClient = null;   // Activity 에서 가져온 Messenger
 
     private MyApp mMyApp;
-    private Timer timer;
+    private Timer mTimer;
     public ServiceWorldTime() { }
     @Override
     public IBinder onBind(Intent intent) {
@@ -40,6 +40,7 @@ public class ServiceWorldTime extends Service {
     }
     @Override
     public void onDestroy() {
+        mTimer.cancel();
         super.onDestroy();
     }
     private void procCmd(Intent intent) {
@@ -52,7 +53,9 @@ public class ServiceWorldTime extends Service {
     }
 
     private void procCmdRunWorldTime(){
-        runTimer();
+        if(mTimer == null) {    // 타이머 중복 실행 방지
+            runTimer();
+        }
     }
 
     void runTimer(){
@@ -62,8 +65,8 @@ public class ServiceWorldTime extends Service {
                 updateWorldTime();
             }
         };
-        timer = new Timer();
-        timer.schedule(tt, 0, MyApp.WORLD_TIME_TERM_MS);
+        mTimer = new Timer();
+        mTimer.schedule(tt, 0, MyApp.WORLD_TIME_TERM_MS);
     }
     private void updateWorldTime() {
         long currentWorldTime = mMyApp.getmWorldTime();
