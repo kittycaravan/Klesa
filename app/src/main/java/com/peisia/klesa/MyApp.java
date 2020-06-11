@@ -13,7 +13,7 @@ public class MyApp extends Application {
     static public final int PLAYER_TICK_RECOVER_MP_POINT = 5;
     static public final int PLAYER_TICK_RECOVER_VP_POINT = 10;
     ////    플레이어 - 이동 입력 편의기능을 위한 기능 상수값
-    static public final long PLAYER_MOVE_INPUT_WAIT_TIME = 3000;  // 이동 입력 후 몇 초 안으로 추가 입력이 없을 시 이동 자동 처리.
+    static public final long PLAYER_MOVE_INPUT_WAIT_TIME = 2000;  // 이동 입력 후 몇 초 안으로 추가 입력이 없을 시 이동 자동 처리.
 
     private long mWorldTime = 0L;    // 초기값 0 ms
     public long getmWorldTime() {

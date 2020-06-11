@@ -279,7 +279,7 @@ public class FragmentHome extends Fragment {
             long currentTime = mMyApp.getmWorldTime();
             //3.이전 기록 시간과 비교
             if (currentTime - mInputTxtTimeBefore > MyApp.PLAYER_MOVE_INPUT_WAIT_TIME) {
-                Log.v("ASM", "======== 입력하고 5초가 넘음");
+                Log.v("ASM", "======== 입력하고 "+MyApp.PLAYER_MOVE_INPUT_WAIT_TIME / 1000+"초가 넘음");
                 //// 이동 입력 확인과 처리
                 String inputText = mEt.getText().toString();
                 switch (inputText) {
@@ -304,7 +304,7 @@ public class FragmentHome extends Fragment {
                 mInputTxtTimeBefore = 0L;   // 1.이전 입력 시간 변수 초기화
                 mEt.setText("");            // 2.입력 창 리셋
             } else {
-                Log.v("ASM", "======== 입력하고 5초 안넘음");
+                Log.v("ASM", "======== 입력하고 "+MyApp.PLAYER_MOVE_INPUT_WAIT_TIME / 1000+"초 안넘음");
             }
         }
     }
