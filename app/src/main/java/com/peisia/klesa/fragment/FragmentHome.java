@@ -26,6 +26,7 @@ import com.peisia.klesa.MyApp;
 import com.peisia.klesa.R;
 import com.peisia.klesa.data.Mob;
 import com.peisia.klesa.data.Player;
+import com.peisia.klesa.data.Room;
 import com.peisia.klesa.service.ServiceWorldTime;
 import com.peisia.klesa.ui.adapter.AdapterRecyclerInfoDisplay;
 import com.peisia.klesa.ui.listdata.ListDataInfoDisplay;
@@ -57,7 +58,7 @@ public class FragmentHome extends Fragment {
     private int mY; // mCoordinateY, 좌표 y
     private int mZ; // mCoordinateZ, 좌표 z
 
-    private HashMap<Long, String> mMap;
+    private HashMap<Long, Room> mMap;
     private long mCurrentXyz;
     private Player mPlayer;
     private ArrayList<Mob> mMobs;
@@ -211,7 +212,8 @@ public class FragmentHome extends Fragment {
         mZ = 1;
     }
     private void displayRoom(long xyzCode){
-        displayText(mMap.get(xyzCode));
+        displayText("["+mMap.get(xyzCode).getName()+"]");   // Room 이름 표시
+        displayText(mMap.get(xyzCode).getDesc());               // Room 설명 표시
     }
     /** 방좌표 코드와 매칭하여 방찾기 */
     private void procMatchingRoom(int x, int y, int z) {
@@ -254,14 +256,13 @@ public class FragmentHome extends Fragment {
     }
     private void initLoadMap(){
         mMap = new HashMap<>();
-        mMap.put(1111L, "연습장 입구");
-        mMap.put(1211L, "연습장 남서쪽");
-        mMap.put(1221L, "연습장 북서쪽");
-        mMap.put(1321L, "연습장 북동쪽");
-        mMap.put(1311L, "연습장 남동쪽");
+        mMap.put(1111L, new Room("연습장 입구","초보자들을 위한 연습장으로 들어가는 입구다.", 1111L));
+        mMap.put(1211L, new Room("연습장 남서쪽","초보들을 위한 연습장이다. 허수아비가 몇개 서있다.", 1211L));
+        mMap.put(1221L, new Room("연습장 북서쪽","초보들을 위한 연습장이다. 쓰레기가 나뒹굴고 있다..", 1221L));
+        mMap.put(1321L, new Room("연습장 북동쪽","초보들을 위한 연습장이다. 바닥에 오래된 핏자국이 묻어있다.", 1321L));
+        mMap.put(1311L, new Room("연습장 남동쪽","초보들을 위한 연습장이다. 음산한 기운이 느껴진다.", 1311L));
     }
     private void initLoadPlayer(){
-//        mPlayer = new Player(10, 8, 3, 100, 50, 30);
         mPlayer = new Player(10, 8, 3, 100, 50, 30, 1, 1, 10);
         mPlayer.setCodeXyz(1111);
     }
