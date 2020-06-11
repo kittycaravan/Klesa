@@ -48,16 +48,11 @@ public class FragmentHome extends Fragment {
     @BindView(R.id.fm_home_et) EditText mEt;
     @BindView(R.id.fm_home_status_cl_tv) TextView mStatus;
     private LinearLayoutManager mLlm;
-    AdapterRecyclerInfoDisplay mAdapterRecyclerInfoDisplay;
-    ArrayList<ListItemInfoDisplay> mItems = new ArrayList<>();
-
-    InputMethodManager imm;
-
+    private AdapterRecyclerInfoDisplay mAdapterRecyclerInfoDisplay;
+    private ArrayList<ListItemInfoDisplay> mItems = new ArrayList<>();
+    private InputMethodManager imm;
     private String mLastInputText;
-    private int mX; // mCoordinateX, 좌표 X
-    private int mY; // mCoordinateY, 좌표 y
-    private int mZ; // mCoordinateZ, 좌표 z
-
+    private int mX, mY, mZ; // mCoordinateX, 좌표 X
     private HashMap<Long, Room> mMap;
     private long mCurrentXyz;
     private Player mPlayer;
@@ -102,10 +97,8 @@ public class FragmentHome extends Fragment {
         mEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                // 주의. 전송(엔터) 누른 경우 이 onEditorAction 이 두번일어난다.
-                // 한번은 event 가 null 인 채로 오고
-                // 두번째는 event 가 있는 상태로 온다.
-                // 따라서 아래처럼 null 이 아닐 때의 처리로 분기해야한다.
+                // 주의. 전송(엔터) 누른 경우 이 onEditorAction 이 두번일어난다. 한번은 event 가 null 인 채로 오고
+                // 두번째는 event 가 있는 상태로 온다. 따라서 아래처럼 null 이 아닐 때의 처리로 분기해야한다.
                 if(event != null){
                     String inputText = v.getText().toString();
                     if(TextUtils.isEmpty(inputText)){
@@ -125,50 +118,34 @@ public class FragmentHome extends Fragment {
                 return false;
             }
         });
-        mEt.addTextChangedListener(new TextWatcher() {
+        mEt.addTextChangedListener(new TextWatcher() {  // 입력 변화 리스너로 첫 입력 후 두번째 입력이 n 초 후에 이뤄지지 않으면 아래 처리를 함. 단 이동에 대해서만.
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Log.v("ASM","==== ==== 텍스트 변화를 알 수 있다고? :"+s);
-
-                //todo 첫 입력 후 두번째 입력이 n 초 후에 이뤄지지 않으면 아래 처리를 함. 단 이동에 대해서만.
-
-                //todo 로직을 잡아보자
-
                 ////    자동입력 처리에서 처리후 입력텍스트를 ""로 초기화 하는데 이 행위 자체로 여기가 호출되고,
                 ////    이 조건을 안넣으면 입력시간을 기록해버리게 되므로 조건 추가함.
                 if(!TextUtils.isEmpty(s.toString())){
-                    //1.첫 입력한 현재 시간을 기록
-                    mInputTxtTimeBefore = mMyApp.getmWorldTime();
+                    mInputTxtTimeBefore = mMyApp.getmWorldTime();   //1.첫 입력한 현재 시간을 기록
                 }
-
-                //2.지연 확인은 다른곳에서 해야함.
-                //어디서?
             }
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) { }
         });
-
     }
     private void procUserTextInput(String inputText) {
         switch(inputText){
-            case "e":
-            case "ㄷ":
+            case "e": case "ㄷ":
                 procPlayerMoveEast();
                 break;
-            case "w":
-            case "ㅅ":
+            case "w": case "ㅅ":
                 procPlayerMoveWest();
                 break;
-            case "s":
-            case "ㄴ":
+            case "s": case "ㄴ":
                 procPlayerMoveSouth();
                 break;
-            case "n":
-            case "ㅂ":
+            case "n": case "ㅂ":
                 procPlayerMoveNorth();
                 break;
         }
@@ -266,53 +243,46 @@ public class FragmentHome extends Fragment {
         mPlayer = new Player(10, 8, 3, 100, 50, 30, 1, 1, 10);
         mPlayer.setCodeXyz(1111);
     }
-
     private void startServiceWorldTime(){
         Intent intent = new Intent(mContext, ServiceWorldTime.class);
         intent.putExtra(MyApp.INTENT_KEY_SERVICE_CMD, MyApp.INTENT_VALUE_SERVICE_START_WORLD_TIME);
         mContext.startService(intent);
         mContext.bindService(intent, ((ActivityMain)mContext).getConnection(), Context.BIND_AUTO_CREATE);
     }
-
     public void displayTickGodness(){
         displayText(getString(R.string.dp_info_tick_goddess));
     }
     public void displayTickGodnessPrepare(){
         displayText(getString(R.string.dp_info_tick_goddess_prepare));
     }
-    /*************************************************
-     * 월드 시간 업데이트에 대한 처리. 즉 1초마다 할일
-     ********************************************** */
+    /************************************************************
+     * * 중요 * 월드 시간 업데이트에 대한 처리. 즉 1초마다 할일
+     ********************************************************** */
     public void procWorldTimeUpdate(){
         procTimeTick();
-        //todo 또 뭘 처리할까. 이것저것 다 해야될껄?
         procTimeStatus();
         procDelayInput();   // 딜레이 입력 처리(ex. ㄷ 입력후 5초 지나도록 입력이 없으면 이동 처리)
+        //todo 또 뭘 처리할까. 이것저것 다 해야될껄?
     }
     private void procDelayInput() {
         if(mInputTxtTimeBefore != 0L){
             Log.v("ASM","======== 입력 지연 로직 들어옴"+mInputTxtTimeBefore);
             long currentTime = mMyApp.getmWorldTime();
-            //3.이전 기록 시간과 비교
-            if (currentTime - mInputTxtTimeBefore > MyApp.PLAYER_MOVE_INPUT_WAIT_TIME) {
+            if (currentTime - mInputTxtTimeBefore > MyApp.PLAYER_MOVE_INPUT_WAIT_TIME) {    //이전 기록 시간과 비교
                 Log.v("ASM", "======== 입력하고 "+MyApp.PLAYER_MOVE_INPUT_WAIT_TIME / 1000+"초가 넘음");
                 //// 이동 입력 확인과 처리
                 String inputText = mEt.getText().toString();
                 switch (inputText) {
-                    case "e":
-                    case "ㄷ":
+                    case "e": case "ㄷ":
                         procPlayerMoveEast();
                         break;
-                    case "w":
-                    case "ㅅ":
+                    case "w": case "ㅅ":
                         procPlayerMoveWest();
                         break;
-                    case "s":
-                    case "ㄴ":
+                    case "s": case "ㄴ":
                         procPlayerMoveSouth();
                         break;
-                    case "n":
-                    case "ㅂ":
+                    case "n": case "ㅂ":
                         procPlayerMoveNorth();
                         break;
                 }
@@ -325,8 +295,8 @@ public class FragmentHome extends Fragment {
             }
         }
     }
+    /** 틱선녀 처리 */
     private void procTimeTick(){
-        ////    틱선녀 처리
         long currentWorldTime = mMyApp.getmWorldTime();
         if(currentWorldTime != 0){
             ////    틱선녀 처리 - 2.틱 지남 알림
