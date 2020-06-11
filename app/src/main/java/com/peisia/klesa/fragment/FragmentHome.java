@@ -126,8 +126,12 @@ public class FragmentHome extends Fragment {
 
                 //todo 로직을 잡아보자
 
-                //1.첫 입력한 현재 시간을 기록
-                mInputTxtTimeBefore = mMyApp.getmWorldTime();
+                ////    자동입력 처리에서 처리후 입력텍스트를 ""로 초기화 하는데 이 행위 자체로 여기가 호출되고,
+                ////    이 조건을 안넣으면 입력시간을 기록해버리게 되므로 조건 추가함.
+                if(!TextUtils.isEmpty(s.toString())){
+                    //1.첫 입력한 현재 시간을 기록
+                    mInputTxtTimeBefore = mMyApp.getmWorldTime();
+                }
 
                 //2.지연 확인은 다른곳에서 해야함.
                 //어디서?
@@ -275,7 +279,8 @@ public class FragmentHome extends Fragment {
         procDelayInput();   // 딜레이 입력 처리(ex. ㄷ 입력후 5초 지나도록 입력이 없으면 이동 처리)
     }
     private void procDelayInput() {
-        if(mInputTxtTimeBefore != 0){
+        if(mInputTxtTimeBefore != 0L){
+            Log.v("ASM","======== 입력 지연 로직 들어옴"+mInputTxtTimeBefore);
             long currentTime = mMyApp.getmWorldTime();
             //3.이전 기록 시간과 비교
             if (currentTime - mInputTxtTimeBefore > MyApp.PLAYER_MOVE_INPUT_WAIT_TIME) {
