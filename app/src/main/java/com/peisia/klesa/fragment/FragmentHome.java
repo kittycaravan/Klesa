@@ -316,6 +316,7 @@ public class FragmentHome extends Fragment {
                         break;
                 }
                 ////    초기화
+                mLastInputText = inputText; // *중요*.0. 입력 편의를 위해 마지막 입력을 기억해두기 << 기능때문에 마지막 입력으로 취급하기위해 변수에 값 줘야함.
                 mInputTxtTimeBefore = 0L;   // 1.이전 입력 시간 변수 초기화
                 mEt.setText("");            // 2.입력 창 리셋
             } else {
