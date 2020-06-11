@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.peisia.klesa.ActivityMain;
 import com.peisia.klesa.MyApp;
 import com.peisia.klesa.R;
+import com.peisia.klesa.data.Mob;
 import com.peisia.klesa.data.Player;
 import com.peisia.klesa.service.ServiceWorldTime;
 import com.peisia.klesa.ui.adapter.AdapterRecyclerInfoDisplay;
@@ -59,6 +60,7 @@ public class FragmentHome extends Fragment {
     private HashMap<Long, String> mMap;
     private long mCurrentXyz;
     private Player mPlayer;
+    private ArrayList<Mob> mMobs;
     private long mInputTxtTimeBefore = 0L;
     @Nullable
     @Override
@@ -82,8 +84,16 @@ public class FragmentHome extends Fragment {
     private void inits() {
         initLoadMap();     // 로드   : 방정보
         initLoadPlayer();   // 로드   : 플레이어
+        initLoadMobs();
         initKeyboard();
         initPlayerXYZ();
+    }
+    private void initLoadMobs() {
+        mMobs = new ArrayList<>();
+        mMobs.add(new Mob("쥐",5,5,5,5,5,5,5,5,5,1111));
+        mMobs.add(new Mob("쥐",5,5,5,5,5,5,5,5,5,1111));
+        mMobs.add(new Mob("쥐",5,5,5,5,5,5,5,5,5,1111));
+        mMobs.add(new Mob("쥐",5,5,5,5,5,5,5,5,5,1111));
     }
     private void initKeyboard(){
         imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
