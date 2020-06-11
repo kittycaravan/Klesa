@@ -3,7 +3,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -57,6 +59,7 @@ public class FragmentHome extends Fragment {
     private HashMap<Long, String> mMap;
     private long mCurrentXyz;
     private Player mPlayer;
+    private long mInputTxtTimeBefore = 0L;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -111,6 +114,29 @@ public class FragmentHome extends Fragment {
                 return false;
             }
         });
+        mEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.v("ASM","==== ==== 텍스트 변화를 알 수 있다고? :"+s);
+
+                //todo 첫 입력 후 두번째 입력이 n 초 후에 이뤄지지 않으면 아래 처리를 함. 단 이동에 대해서만.
+
+                //todo 로직을 잡아보자
+
+                //1.첫 입력한 현재 시간을 기록
+                mInputTxtTimeBefore = mMyApp.getmWorldTime();
+
+                //2.지연 확인은 다른곳에서 해야함.
+                //어디서?
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
     }
     private void procUserTextInput(String inputText) {
         switch(inputText){
@@ -222,7 +248,7 @@ public class FragmentHome extends Fragment {
     }
     private void initLoadPlayer(){
 //        mPlayer = new Player(10, 8, 3, 100, 50, 30);
-        mPlayer = new Player(10, 8, 3, 100, 50, 30, 1, 1, 1);
+        mPlayer = new Player(10, 8, 3, 100, 50, 30, 1, 1, 10);
         mPlayer.setCodeXyz(1111);
     }
 
@@ -239,11 +265,48 @@ public class FragmentHome extends Fragment {
     public void displayTickGodnessPrepare(){
         displayText(getString(R.string.dp_info_tick_goddess_prepare));
     }
-    /** 월드 시간 업데이트에 대한 처리. 즉 1초마다 할일 */
+    /*************************************************
+     * 월드 시간 업데이트에 대한 처리. 즉 1초마다 할일
+     ********************************************** */
     public void procWorldTimeUpdate(){
         procTimeTick();
         //todo 또 뭘 처리할까. 이것저것 다 해야될껄?
         procTimeStatus();
+        procDelayInput();   // 딜레이 입력 처리(ex. ㄷ 입력후 5초 지나도록 입력이 없으면 이동 처리)
+    }
+    private void procDelayInput() {
+        if(mInputTxtTimeBefore != 0){
+            long currentTime = mMyApp.getmWorldTime();
+            //3.이전 기록 시간과 비교
+            if (currentTime - mInputTxtTimeBefore > MyApp.PLAYER_MOVE_INPUT_WAIT_TIME) {
+                Log.v("ASM", "======== 입력하고 5초가 넘음");
+                //// 이동 입력 확인과 처리
+                String inputText = mEt.getText().toString();
+                switch (inputText) {
+                    case "e":
+                    case "ㄷ":
+                        procPlayerMoveEast();
+                        break;
+                    case "w":
+                    case "ㅅ":
+                        procPlayerMoveWest();
+                        break;
+                    case "s":
+                    case "ㄴ":
+                        procPlayerMoveSouth();
+                        break;
+                    case "n":
+                    case "ㅂ":
+                        procPlayerMoveNorth();
+                        break;
+                }
+                ////    초기화
+                mInputTxtTimeBefore = 0L;   // 1.이전 입력 시간 변수 초기화
+                mEt.setText("");            // 2.입력 창 리셋
+            } else {
+                Log.v("ASM", "======== 입력하고 5초 안넘음");
+            }
+        }
     }
     private void procTimeTick(){
         ////    틱선녀 처리
