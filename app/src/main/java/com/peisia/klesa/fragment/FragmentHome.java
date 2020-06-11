@@ -182,7 +182,7 @@ public class FragmentHome extends Fragment {
         ////    탐색
         Log.v("ASM","==== ==== 널이냐 공백이냐? 널이네:" + mMap.get(inputCodeXyz));
         if(mMap.get(inputCodeXyz) == null) {
-            displayText("이동 할 수 없네용");
+            displayText(getString(R.string.dp_player_move_cant));
         } else {    // 좌표 반영
             ////    vp 가 없으면 이동 못하게 처리, 있으면 처리
             if(mPlayer.getVpCurrent() < 1){

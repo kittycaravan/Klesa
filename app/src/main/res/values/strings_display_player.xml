@@ -10,4 +10,5 @@
 <!--    <string name="dp_info_status_form">[100/100,50/50,30/30]</string>    -->
     <string name="dp_info_status_form">[%d/%d,%d/%d,%d/%d]</string>
     <string name="dp_info_status_vp_zero">힘들어서 못가용</string>
+    <string name="dp_player_move_cant">이동 할 수 없네용</string>
 </resources>
