@@ -3,6 +3,13 @@ public class Room {
     String name;
     String desc;
     long xyzCode;
+    long xyz;
+    public Room(String name, String desc, long xyzCode, long xyz) {
+        this.name = name;
+        this.desc = desc;
+        this.xyzCode = xyzCode;
+        this.xyz = xyz;
+    }
     public Room(String name, String desc, long xyzCode) {
         this.name = name;
         this.desc = desc;
@@ -25,5 +32,11 @@ public class Room {
     }
     public void setXyzCode(long xyzCode) {
         this.xyzCode = xyzCode;
+    }
+    public long getXyz() {
+        return xyz;
+    }
+    public void setXyz(long xyz) {
+        this.xyz = xyz;
     }
 }

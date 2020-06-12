@@ -27,6 +27,7 @@ import com.peisia.klesa.R;
 import com.peisia.klesa.data.Mob;
 import com.peisia.klesa.data.Player;
 import com.peisia.klesa.data.Room;
+import com.peisia.klesa.data.Spatiotemporal;
 import com.peisia.klesa.service.ServiceWorldTime;
 import com.peisia.klesa.ui.adapter.AdapterRecyclerInfoDisplay;
 import com.peisia.klesa.ui.listdata.ListDataInfoDisplay;
@@ -53,11 +54,12 @@ public class FragmentHome extends Fragment {
     private InputMethodManager imm;
     private String mLastInputText;
     private int mX, mY, mZ; // mCoordinateX, 좌표 X
-    private HashMap<Long, Room> mMap;
+    private HashMap<Long, Room> mRooms;   // todo 아래 mRooms로 변경
     private long mCurrentXyz;
     private Player mPlayer;
     private ArrayList<Mob> mMobs;
     private long mInputTxtTimeBefore = 0L;
+    private Spatiotemporal mSpatiotemporal;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -189,8 +191,8 @@ public class FragmentHome extends Fragment {
         mZ = 1;
     }
     private void displayRoom(long xyzCode){
-        displayText("["+mMap.get(xyzCode).getName()+"]");   // Room 이름 표시
-        displayText(mMap.get(xyzCode).getDesc());               // Room 설명 표시
+        displayText("["+ mRooms.get(xyzCode).getName()+"]");   // Room 이름 표시
+        displayText(mRooms.get(xyzCode).getDesc());               // Room 설명 표시
     }
     /** 방좌표 코드와 매칭하여 방찾기 */
     private void procMatchingRoom(int x, int y, int z) {
@@ -199,8 +201,8 @@ public class FragmentHome extends Fragment {
                 + (mY + y) * 10
                 + (mZ + z) * 1;
         ////    탐색
-        Log.v("ASM","==== ==== 널이냐 공백이냐? 널이네:" + mMap.get(inputCodeXyz));
-        if(mMap.get(inputCodeXyz) == null) {
+        Log.v("ASM","==== ==== 널이냐 공백이냐? 널이네:" + mRooms.get(inputCodeXyz));
+        if(mRooms.get(inputCodeXyz) == null) {
             displayText(getString(R.string.dp_player_move_cant));
         } else {    // 좌표 반영
             ////    vp 가 없으면 이동 못하게 처리, 있으면 처리
@@ -232,12 +234,8 @@ public class FragmentHome extends Fragment {
         }
     }
     private void initLoadMap(){
-        mMap = new HashMap<>();
-        mMap.put(1111L, new Room("연습장 입구","초보자들을 위한 연습장으로 들어가는 입구다.", 1111L));
-        mMap.put(1211L, new Room("연습장 남서쪽","초보들을 위한 연습장이다. 허수아비가 몇개 서있다.", 1211L));
-        mMap.put(1221L, new Room("연습장 북서쪽","초보들을 위한 연습장이다. 쓰레기가 나뒹굴고 있다..", 1221L));
-        mMap.put(1321L, new Room("연습장 북동쪽","초보들을 위한 연습장이다. 바닥에 오래된 핏자국이 묻어있다.", 1321L));
-        mMap.put(1311L, new Room("연습장 남동쪽","초보들을 위한 연습장이다. 음산한 기운이 느껴진다.", 1311L));
+        mSpatiotemporal = new Spatiotemporal();
+        mRooms = mSpatiotemporal.loadRooms();
     }
     private void initLoadPlayer(){
         mPlayer = new Player(10, 8, 3, 100, 50, 30, 1, 1, 10);
