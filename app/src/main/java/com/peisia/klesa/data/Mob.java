@@ -1,5 +1,6 @@
 package com.peisia.klesa.data;
-public class Player {
+public class Mob {
+    private String name;
     private int str;
     private int dex;
     private int iq;
@@ -10,8 +11,20 @@ public class Player {
     private int mpCurrent;
     private int vpCurrent;
     private int codeXyz;
-
-    public Player(int str, int dex, int iq, int hpMax, int mpMax, int vpMax) {
+    public Mob(String name, int str, int dex, int iq, int hpMax, int mpMax, int vpMax, int hpCurrent, int mpCurrent, int vpCurrent, int codeXyz) {
+        this.name = name;
+        this.str = str;
+        this.dex = dex;
+        this.iq = iq;
+        this.hpMax = hpMax;
+        this.mpMax = mpMax;
+        this.vpMax = vpMax;
+        this.hpCurrent = hpCurrent;
+        this.mpCurrent = mpCurrent;
+        this.vpCurrent = vpCurrent;
+        this.codeXyz = codeXyz;
+    }
+    public Mob(int str, int dex, int iq, int hpMax, int mpMax, int vpMax) {
         this.str = str;
         this.dex = dex;
         this.iq = iq;
@@ -19,7 +32,7 @@ public class Player {
         this.mpMax = mpMax;
         this.vpMax = vpMax;
     }
-    public Player(int str, int dex, int iq, int hpMax, int mpMax, int vpMax, int hpCurrent, int mpCurrent, int vpCurrent) {
+    public Mob(int str, int dex, int iq, int hpMax, int mpMax, int vpMax, int hpCurrent, int mpCurrent, int vpCurrent) {
         this.str = str;
         this.dex = dex;
         this.iq = iq;
@@ -100,5 +113,11 @@ public class Player {
     }
     public void setVpCurrent(int vpCurrent) {
         this.vpCurrent = vpCurrent;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -160,20 +160,15 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             switch (msg.what) {
                 case ServiceWorldTime.MSG_SEND_TO_ACTIVITY_WORLD_TIME_TICK:
                     Log.v("ASM","==== ==== 서비스로 부터 메시지를 받았음 메시지는:"+msg.what);
-                    //todo 시간 업데이트 신호를 받았음. 이걸로 할 처리를..
-                    //todo 틱선녀? 이뿐 틱선녀를 등장시키자
-//                    if(TextUtils.equals(mCurrentFragment.getClass().getSimpleName(), FragmentHome.class.getSimpleName())){
+                    ////    시간 업데이트 신호를 받았음. 이뿐 틱선녀를 등장시키자
                     if(mCurrentFragment instanceof FragmentHome){
-                        Log.v("ASM","==== ==== 여기오냥");
-                        ((FragmentHome)mCurrentFragment).displayTickGodness();
+//                        ((FragmentHome)mCurrentFragment).displayTickGodness();  Log.v("ASM","==== ==== 액티 메인에서 틱선녀 알림 표시");
+                        ((FragmentHome)mCurrentFragment).procWorldTimeUpdate();  Log.v("ASM","==== ==== 액티 메인에서 서비스로부터 세계 시간 업데이트 신호 받음. 이걸 다시 플먼으로 던졌음.");
                     }
 
-
-
+                    ////    데이터 처리법 참고 코드. 지우지맘
 /*                    int value1 = msg.getData().getInt("fromService");
-                    String value2 = msg.getData().getString("test");
-                    Log.i("test","act : value1 "+value1);
-                    Log.i("test","act : value2 "+value2);*/
+                    String value2 = msg.getData().getString("test");*/
                     break;
             }
             return false;

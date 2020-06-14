@@ -3,7 +3,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -22,7 +24,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.peisia.klesa.ActivityMain;
 import com.peisia.klesa.MyApp;
 import com.peisia.klesa.R;
+import com.peisia.klesa.data.Mob;
 import com.peisia.klesa.data.Player;
+import com.peisia.klesa.data.Room;
+import com.peisia.klesa.data.Spatiotemporal;
 import com.peisia.klesa.service.ServiceWorldTime;
 import com.peisia.klesa.ui.adapter.AdapterRecyclerInfoDisplay;
 import com.peisia.klesa.ui.listdata.ListDataInfoDisplay;
@@ -39,22 +44,22 @@ import butterknife.ButterKnife;
  */
 public class FragmentHome extends Fragment {
     private Context mContext;
+    private MyApp mMyApp;
     @BindView(R.id.fm_home_rv_info_display) RecyclerView mRv;
     @BindView(R.id.fm_home_et) EditText mEt;
+    @BindView(R.id.fm_home_status_cl_tv) TextView mStatus;
     private LinearLayoutManager mLlm;
-    AdapterRecyclerInfoDisplay mAdapterRecyclerInfoDisplay;
-    ArrayList<ListItemInfoDisplay> mItems = new ArrayList<>();
-
-    InputMethodManager imm;
-
+    private AdapterRecyclerInfoDisplay mAdapterRecyclerInfoDisplay;
+    private ArrayList<ListItemInfoDisplay> mItems = new ArrayList<>();
+    private InputMethodManager imm;
     private String mLastInputText;
-    private int mX; // mCoordinateX, 좌표 X
-    private int mY; // mCoordinateY, 좌표 y
-    private int mZ; // mCoordinateZ, 좌표 z
-
-    private HashMap<Long, String> mMap;
+    private int mX, mY, mZ; // mCoordinateX, 좌표 X
+    private HashMap<Long, Room> mRooms;   // todo 아래 mRooms로 변경
     private long mCurrentXyz;
     private Player mPlayer;
+    private ArrayList<Mob> mMobs;
+    private long mInputTxtTimeBefore = 0L;
+    private Spatiotemporal mSpatiotemporal;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,19 +69,29 @@ public class FragmentHome extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mContext = getContext();
+        mMyApp = (MyApp)((ActivityMain)mContext).getApplication();
         ButterKnife.bind(this, view);
         inits();    // 각종 초기화들
         mAdapterRecyclerInfoDisplay = new AdapterRecyclerInfoDisplay(mItems);
         mLlm = new LinearLayoutManager(getContext());
         mRv.setLayoutManager(mLlm);
         mRv.setAdapter(mAdapterRecyclerInfoDisplay);
+        displayIntroduceWorld();    // 대문 표시
         startServiceWorldTime();    // 세계 시간을 시작
     }
     private void inits() {
         initLoadMap();     // 로드   : 방정보
         initLoadPlayer();   // 로드   : 플레이어
+        initLoadMobs();
         initKeyboard();
         initPlayerXYZ();
+    }
+    private void initLoadMobs() {
+        mMobs = new ArrayList<>();
+        mMobs.add(new Mob("쥐",5,5,5,5,5,5,5,5,5,1111));
+        mMobs.add(new Mob("쥐",5,5,5,5,5,5,5,5,5,1111));
+        mMobs.add(new Mob("쥐",5,5,5,5,5,5,5,5,5,1111));
+        mMobs.add(new Mob("쥐",5,5,5,5,5,5,5,5,5,1111));
     }
     private void initKeyboard(){
         imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -84,10 +99,8 @@ public class FragmentHome extends Fragment {
         mEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                // 주의. 전송(엔터) 누른 경우 이 onEditorAction 이 두번일어난다.
-                // 한번은 event 가 null 인 채로 오고
-                // 두번째는 event 가 있는 상태로 온다.
-                // 따라서 아래처럼 null 이 아닐 때의 처리로 분기해야한다.
+                // 주의. 전송(엔터) 누른 경우 이 onEditorAction 이 두번일어난다. 한번은 event 가 null 인 채로 오고
+                // 두번째는 event 가 있는 상태로 온다. 따라서 아래처럼 null 이 아닐 때의 처리로 분기해야한다.
                 if(event != null){
                     String inputText = v.getText().toString();
                     if(TextUtils.isEmpty(inputText)){
@@ -107,23 +120,34 @@ public class FragmentHome extends Fragment {
                 return false;
             }
         });
+        mEt.addTextChangedListener(new TextWatcher() {  // 입력 변화 리스너로 첫 입력 후 두번째 입력이 n 초 후에 이뤄지지 않으면 아래 처리를 함. 단 이동에 대해서만.
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.v("ASM","==== ==== 텍스트 변화를 알 수 있다고? :"+s);
+                ////    자동입력 처리에서 처리후 입력텍스트를 ""로 초기화 하는데 이 행위 자체로 여기가 호출되고,
+                ////    이 조건을 안넣으면 입력시간을 기록해버리게 되므로 조건 추가함.
+                if(!TextUtils.isEmpty(s.toString())){
+                    mInputTxtTimeBefore = mMyApp.getmWorldTime();   //1.첫 입력한 현재 시간을 기록
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
     }
     private void procUserTextInput(String inputText) {
         switch(inputText){
-            case "e":
-            case "ㄷ":
+            case "e": case "ㄷ":
                 procPlayerMoveEast();
                 break;
-            case "w":
-            case "ㅅ":
+            case "w": case "ㅅ":
                 procPlayerMoveWest();
                 break;
-            case "s":
-            case "ㄴ":
+            case "s": case "ㄴ":
                 procPlayerMoveSouth();
                 break;
-            case "n":
-            case "ㅂ":
+            case "n": case "ㅂ":
                 procPlayerMoveNorth();
                 break;
         }
@@ -167,7 +191,8 @@ public class FragmentHome extends Fragment {
         mZ = 1;
     }
     private void displayRoom(long xyzCode){
-        displayText(mMap.get(xyzCode));
+        displayText("["+ mRooms.get(xyzCode).getName()+"]");   // Room 이름 표시
+        displayText(mRooms.get(xyzCode).getDesc());               // Room 설명 표시
     }
     /** 방좌표 코드와 매칭하여 방찾기 */
     private void procMatchingRoom(int x, int y, int z) {
@@ -176,15 +201,21 @@ public class FragmentHome extends Fragment {
                 + (mY + y) * 10
                 + (mZ + z) * 1;
         ////    탐색
-        Log.v("ASM","==== ==== 널이냐 공백이냐? 널이네:" + mMap.get(inputCodeXyz));
-        if(mMap.get(inputCodeXyz) == null){
-            displayText("이동 할 수 없네용");
+        Log.v("ASM","==== ==== 널이냐 공백이냐? 널이네:" + mRooms.get(inputCodeXyz));
+        if(mRooms.get(inputCodeXyz) == null) {
+            displayText(getString(R.string.dp_player_move_cant));
         } else {    // 좌표 반영
-            mX = mX + x;
-            mY = mY + y;
-            mZ = mZ + z;
-            displayPlayerMove(x, y, z);
-            displayRoom(UtilKlesaMap.xyzToXyzCode(mX, mY, mZ));  // 이동한 새 방 설명 표시 처리
+            ////    vp 가 없으면 이동 못하게 처리, 있으면 처리
+            if(mPlayer.getVpCurrent() < 1){
+                displayText(getString(R.string.dp_info_status_vp_zero));
+            } else {
+                procPlayerStatus(0, 0, -1); // vp 1 감소 처리
+                mX = mX + x;
+                mY = mY + y;
+                mZ = mZ + z;
+                displayPlayerMove(x, y, z);
+                displayRoom(UtilKlesaMap.xyzToXyzCode(mX, mY, mZ));  // 이동한 새 방 설명 표시 처리
+            }
         }
     }
     private void displayPlayerMove(int x, int y, int z) {
@@ -203,26 +234,132 @@ public class FragmentHome extends Fragment {
         }
     }
     private void initLoadMap(){
-        mMap = new HashMap<>();
-        mMap.put(1111L, "연습장 입구");
-        mMap.put(1211L, "연습장 남서쪽");
-        mMap.put(1221L, "연습장 북서쪽");
-        mMap.put(1321L, "연습장 북동쪽");
-        mMap.put(1311L, "연습장 남동쪽");
+        mSpatiotemporal = new Spatiotemporal();
+        mRooms = mSpatiotemporal.loadRooms();
     }
     private void initLoadPlayer(){
-        mPlayer = new Player(10, 8, 3, 100, 50, 30);
+        mPlayer = new Player(10, 8, 3, 100, 50, 30, 1, 1, 10);
         mPlayer.setCodeXyz(1111);
     }
-
     private void startServiceWorldTime(){
         Intent intent = new Intent(mContext, ServiceWorldTime.class);
         intent.putExtra(MyApp.INTENT_KEY_SERVICE_CMD, MyApp.INTENT_VALUE_SERVICE_START_WORLD_TIME);
         mContext.startService(intent);
         mContext.bindService(intent, ((ActivityMain)mContext).getConnection(), Context.BIND_AUTO_CREATE);
     }
-
     public void displayTickGodness(){
-        displayText(getString(R.string.dp_info_tick_godness));
+        displayText(getString(R.string.dp_info_tick_goddess));
+    }
+    public void displayTickGodnessPrepare(){
+        displayText(getString(R.string.dp_info_tick_goddess_prepare));
+    }
+    /************************************************************
+     * * 중요 * 월드 시간 업데이트에 대한 처리. 즉 1초마다 할일
+     ********************************************************** */
+    public void procWorldTimeUpdate(){
+        procTimeTick();
+        procTimeStatus();
+        procDelayInput();   // 딜레이 입력 처리(ex. ㄷ 입력후 5초 지나도록 입력이 없으면 이동 처리)
+        //todo 또 뭘 처리할까. 이것저것 다 해야될껄?
+    }
+    private void procDelayInput() {
+        if(mInputTxtTimeBefore != 0L){
+            Log.v("ASM","======== 입력 지연 로직 들어옴"+mInputTxtTimeBefore);
+            long currentTime = mMyApp.getmWorldTime();
+            if (currentTime - mInputTxtTimeBefore > MyApp.PLAYER_MOVE_INPUT_WAIT_TIME) {    //이전 기록 시간과 비교
+                Log.v("ASM", "======== 입력하고 "+MyApp.PLAYER_MOVE_INPUT_WAIT_TIME / 1000+"초가 넘음");
+                //// 이동 입력 확인과 처리
+                String inputText = mEt.getText().toString();
+                switch (inputText) {
+                    case "e": case "ㄷ":
+                        procPlayerMoveEast();
+                        break;
+                    case "w": case "ㅅ":
+                        procPlayerMoveWest();
+                        break;
+                    case "s": case "ㄴ":
+                        procPlayerMoveSouth();
+                        break;
+                    case "n": case "ㅂ":
+                        procPlayerMoveNorth();
+                        break;
+                }
+                ////    초기화
+                mLastInputText = inputText; // *중요*.0. 입력 편의를 위해 마지막 입력을 기억해두기 << 기능때문에 마지막 입력으로 취급하기위해 변수에 값 줘야함.
+                mInputTxtTimeBefore = 0L;   // 1.이전 입력 시간 변수 초기화
+                mEt.setText("");            // 2.입력 창 리셋
+            } else {
+                Log.v("ASM", "======== 입력하고 "+MyApp.PLAYER_MOVE_INPUT_WAIT_TIME / 1000+"초 안넘음");
+            }
+        }
+    }
+    /** 틱선녀 처리 */
+    private void procTimeTick(){
+        long currentWorldTime = mMyApp.getmWorldTime();
+        if(currentWorldTime != 0){
+            ////    틱선녀 처리 - 2.틱 지남 알림
+            if((currentWorldTime/MyApp.WORLD_TIME_TERM_MS) % MyApp.WORLD_TIME_TERM_TICK_SEC == 0) {
+                procPlayerRecoverByTick();
+                displayTickGodness();
+                ////    틱선녀 처리 - 1.틱 5초전 알림
+            } else if(((currentWorldTime/MyApp.WORLD_TIME_TERM_MS) + MyApp.WORLD_TIME_TERM_TICK_PREPARE_SEC) % MyApp.WORLD_TIME_TERM_TICK_SEC == 0){
+                displayTickGodnessPrepare();    //todo 백그라운드 내려가있을 때의 예외처리 해야함. 안그럼 죽어 자꾸. 아니면 백 상태에서 서비스가 안돌게 하던지.
+            }
+        }
+    }
+    private void displayIntroduceWorld(){
+        displayText(getString(R.string.dp_info_world_enter));
+    }
+    /** 상태 처리.(상태창 갱신 등) */
+    private void procTimeStatus(){
+        int playerCurrentHp = mPlayer.getHpCurrent();
+        int playerMaxHp = mPlayer.getHpMax();
+        int playerCurrentMp = mPlayer.getMpCurrent();
+        int playerMaxMp = mPlayer.getMpMax();
+        int playerCurrentVp = mPlayer.getVpCurrent();
+        int playerMaxVp = mPlayer.getVpMax();
+        mStatus.setText(String.format(getString(R.string.dp_info_status_form), playerCurrentHp,playerMaxHp,playerCurrentMp,playerMaxMp,playerCurrentVp,playerMaxVp));
+    }
+    /** 플레이어 회복 처리 */
+    private void procPlayerRecoverByTick(){
+        int hpCurrent = mPlayer.getHpCurrent() + MyApp.PLAYER_TICK_RECOVER_HP_POINT;
+        int mpCurrent = mPlayer.getMpCurrent() + MyApp.PLAYER_TICK_RECOVER_MP_POINT;
+        int vpCurrent = mPlayer.getVpCurrent() + MyApp.PLAYER_TICK_RECOVER_VP_POINT;
+        int hpMax = mPlayer.getHpMax();
+        int mpMax = mPlayer.getMpMax();
+        int vpMax = mPlayer.getVpMax();
+        if(hpCurrent > hpMax){
+            hpCurrent = hpMax;
+        }
+        if(mpCurrent > mpMax){
+            mpCurrent = mpMax;
+        }
+        if(vpCurrent > vpMax){
+            vpCurrent = vpMax;
+        }
+        mPlayer.setHpCurrent(hpCurrent);
+        mPlayer.setMpCurrent(mpCurrent);
+        mPlayer.setVpCurrent(vpCurrent);
+    }
+    /** 플레이어 스탯 가감 */
+    private void procPlayerStatus(int addHp, int addMp, int addVp){
+        int hpCurrent = mPlayer.getHpCurrent() + addHp;
+        int mpCurrent = mPlayer.getMpCurrent() + addMp;
+        int vpCurrent = mPlayer.getVpCurrent() + addVp;
+        int hpMax = mPlayer.getHpMax();
+        int mpMax = mPlayer.getMpMax();
+        int vpMax = mPlayer.getVpMax();
+        if(hpCurrent > hpMax){
+            hpCurrent = hpMax;
+        }
+        if(mpCurrent > mpMax){
+            mpCurrent = mpMax;
+        }
+        if(vpCurrent > vpMax){
+            vpCurrent = vpMax;
+        }
+        mPlayer.setHpCurrent(hpCurrent);
+        mPlayer.setMpCurrent(mpCurrent);
+        mPlayer.setVpCurrent(vpCurrent);
     }
 }

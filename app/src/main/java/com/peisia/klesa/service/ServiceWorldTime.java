@@ -18,7 +18,7 @@ public class ServiceWorldTime extends Service {
     private Messenger mClient = null;   // Activity 에서 가져온 Messenger
 
     private MyApp mMyApp;
-    private Timer timer;
+    private Timer mTimer;
     public ServiceWorldTime() { }
     @Override
     public IBinder onBind(Intent intent) {
@@ -40,6 +40,7 @@ public class ServiceWorldTime extends Service {
     }
     @Override
     public void onDestroy() {
+        mTimer.cancel();
         super.onDestroy();
     }
     private void procCmd(Intent intent) {
@@ -52,7 +53,9 @@ public class ServiceWorldTime extends Service {
     }
 
     private void procCmdRunWorldTime(){
-        runTimer();
+        if(mTimer == null) {    // 타이머 중복 실행 방지
+            runTimer();
+        }
     }
 
     void runTimer(){
@@ -62,8 +65,8 @@ public class ServiceWorldTime extends Service {
                 updateWorldTime();
             }
         };
-        timer = new Timer();
-        timer.schedule(tt, 0, MyApp.WORLD_TIME_TERM_MS);
+        mTimer = new Timer();
+        mTimer.schedule(tt, 0, MyApp.WORLD_TIME_TERM_MS);
     }
     private void updateWorldTime() {
         long currentWorldTime = mMyApp.getmWorldTime();
@@ -71,22 +74,16 @@ public class ServiceWorldTime extends Service {
         mMyApp.setmWorldTime(currentWorldTime); // 세계의 시간을 MyApp.WORLD_TIME_TERM_MS 만큼의 텀으로 갱신. 즉 이 단위로 계산을 처리한다는 뜻.
         Log.v("ASM", "==== ==== 세계의 시간이 흐른다! 신세계의 신 카미너스님! :" + mMyApp.getmWorldTime() + " ms 초");
 
-        //todo 액티로 데이터 보내기
-        if((currentWorldTime/1000) % MyApp.WORLD_TIME_TERM_TICK == 0 && currentWorldTime != 0){
-            Log.v("ASM","==== ==== 틱선녀 부활!");
-            sendNewComesTickGodness();
-        }
-
-/*        Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS);
-        intent.putExtra(MyApp.INTENT_KEY_SERVICE_TIME_NOTICE_TO_ACTIVITY, MyApp.INTENT_VALUE_SERVICE_TIME_NOTICE_TO_ACTIVITY);
-        startActivity(intent);*/
+        sendUpdateWorldTime();  Log.v("ASM","==== ==== 서비스쪽에서 세계 시간 업데이트 신호 보냄");
+//        if((currentWorldTime/1000) % MyApp.WORLD_TIME_TERM_TICK_SEC == 0 && currentWorldTime != 0){
+//            sendUpdateWorldTime();  Log.v("ASM","==== ==== 틱선녀 부활!");
+//        }
     }
     /** 틱선녀가 왔다! */
-    private void sendNewComesTickGodness() {
+    private void sendUpdateWorldTime() {
         try{
             Bundle bundle = new Bundle();
-            bundle.putInt("tick",1);
+//            bundle.putInt("tick",1);  // 데이터 전송 참고 코드. 남겨놓으시오.
             Message msg = Message.obtain(null, MSG_SEND_TO_ACTIVITY_WORLD_TIME_TICK);
             msg.setData(bundle);
             mClient.send(msg);  //msg 보내기
