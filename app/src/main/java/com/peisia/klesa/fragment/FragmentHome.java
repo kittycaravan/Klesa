@@ -139,19 +139,58 @@ public class FragmentHome extends Fragment {
     private void procUserTextInput(String inputText) {
         switch(inputText){
             case "e": case "ㄷ":
-                procPlayerMoveEast();
+                //todo 새로운 처리 방식 메서드로 처리
+//                procPlayerMoveEast();
+                Log.v("hoyangi","======== 여기 안옴????????????");
+                procPlayerMove(MyApp.DIRECTION_EAST);
                 break;
             case "w": case "ㅅ":
-                procPlayerMoveWest();
+                //todo 새로운 처리 방식 메서드로 처리
+//                procPlayerMoveWest();
+                procPlayerMove(MyApp.DIRECTION_WEST);
                 break;
             case "s": case "ㄴ":
-                procPlayerMoveSouth();
+                //todo 새로운 처리 방식 메서드로 처리
+//                procPlayerMoveSouth();
+                procPlayerMove(MyApp.DIRECTION_SOUTH);
                 break;
             case "n": case "ㅂ":
-                procPlayerMoveNorth();
+                //todo 새로운 처리 방식 메서드로 처리
+//                procPlayerMoveNorth();
+                procPlayerMove(MyApp.DIRECTION_NORTH);
                 break;
         }
 
+    }
+    private void procPlayerMove(int direction) {
+        //todo 플레이어의 현재 위치 검사
+        long currentPlayerXyz = mMyApp.getCurrentPlayerXyz();
+        Room currentRoom = mRooms.get(currentPlayerXyz);
+
+        //다음방 연결값이 있는지 검사
+        if(currentRoom.getRoomConnections().get(direction) == null){
+            //todo 이동 불가처리
+            Log.v("hoyangi","==== 이동 불가염...");
+            displayText(getString(R.string.dp_player_move_cant));
+        } else {    //todo 이동 처리
+            long nextRoomXyz = currentRoom.getRoomConnections().get(direction);
+            Log.v("hoyangi","======== nextRoomXyz 값 검사:"+nextRoomXyz);
+
+            //todo 이동력 소모 시키기
+            ////    vp 가 없으면 이동 못하게 처리, 있으면 처리
+            if(mPlayer.getVpCurrent() < 1){
+                displayText(getString(R.string.dp_info_status_vp_zero));
+            } else {
+                procPlayerStatus(0, 0, -1); // vp 1 감소 처리
+                //todo 상태창 갱신하기
+                procTimeStatus();
+                //todo 플레이어가 움직인 방향 표시
+                displayPlayerMoveNew(direction);
+                //todo 현재 방 정보 표시
+                displayRoom(nextRoomXyz);
+                mMyApp.setCurrentPlayerXyz(nextRoomXyz);    // 현재 방 위치를 바꿈
+            }
+        }
     }
     private void displayText(String s) {
         mItems.add(new ListItemInfoDisplay(new ListDataInfoDisplay(s)));
@@ -189,6 +228,8 @@ public class FragmentHome extends Fragment {
         mX = 1;
         mY = 1;
         mZ = 1;
+
+        mMyApp.setCurrentPlayerXyz(1251110101001001001L);   // todo 일단 플레이어 시작 위치는 연습장 입구로 지정함. 임시.
     }
     private void displayRoom(long xyzCode){
         displayText("["+ mRooms.get(xyzCode).getName()+"]");   // Room 이름 표시
@@ -233,6 +274,17 @@ public class FragmentHome extends Fragment {
 
         }
     }
+    private void displayPlayerMoveNew(int direction) {
+        if(direction == MyApp.DIRECTION_EAST){
+            displayText(getString(R.string.dp_player_move_e));   // 표시
+        } else if(direction == MyApp.DIRECTION_WEST) {
+            displayText(getString(R.string.dp_player_move_w));   // 표시
+        } else if(direction == MyApp.DIRECTION_SOUTH) {
+            displayText(getString(R.string.dp_player_move_s));   // 표시
+        } else if(direction == MyApp.DIRECTION_NORTH) {
+            displayText(getString(R.string.dp_player_move_n));   // 표시
+        }
+    }
     private void initLoadMap(){
         mSpatiotemporal = new Spatiotemporal();
         mRooms = mSpatiotemporal.loadRooms();
@@ -270,18 +322,24 @@ public class FragmentHome extends Fragment {
                 Log.v("ASM", "======== 입력하고 "+MyApp.PLAYER_MOVE_INPUT_WAIT_TIME / 1000+"초가 넘음");
                 //// 이동 입력 확인과 처리
                 String inputText = mEt.getText().toString();
+                //todo 새로운 처리 방식 메서드로 처리
                 switch (inputText) {
                     case "e": case "ㄷ":
-                        procPlayerMoveEast();
+//                        procPlayerMoveEast();
+                        procPlayerMove(MyApp.DIRECTION_EAST);
                         break;
                     case "w": case "ㅅ":
-                        procPlayerMoveWest();
+//                        procPlayerMoveWest();
+                        procPlayerMove(MyApp.DIRECTION_WEST);
                         break;
                     case "s": case "ㄴ":
-                        procPlayerMoveSouth();
+                        //todo 새로운 처리 방식 메서드로 처리
+//                        procPlayerMoveSouth();
+                        procPlayerMove(MyApp.DIRECTION_SOUTH);
                         break;
                     case "n": case "ㅂ":
-                        procPlayerMoveNorth();
+//                        procPlayerMoveNorth();
+                        procPlayerMove(MyApp.DIRECTION_NORTH);
                         break;
                 }
                 ////    초기화

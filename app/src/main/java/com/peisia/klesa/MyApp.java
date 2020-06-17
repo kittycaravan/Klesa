@@ -14,12 +14,26 @@ public class MyApp extends Application {
     static public final int PLAYER_TICK_RECOVER_VP_POINT = 10;
     ////    플레이어 - 이동 입력 편의기능을 위한 기능 상수값
     static public final long PLAYER_MOVE_INPUT_WAIT_TIME = 2000;  // 이동 입력 후 몇 초 안으로 추가 입력이 없을 시 이동 자동 처리.
+    ////    룸 - 연결 방향 상수
+    static public final int DIRECTION_EAST = 1;
+    static public final int DIRECTION_WEST = 2;
+    static public final int DIRECTION_SOUTH = 3;
+    static public final int DIRECTION_NORTH = 4;
+    static public final int DIRECTION_UP = 5;
+    static public final int DIRECTION_DOWN = 6;
 
     private long mWorldTime = 0L;    // 초기값 0 ms
+    private long mCurrentPlayerXyz; // 플레이어의 현재 위치
     public long getmWorldTime() {
         return mWorldTime;
     }
     public void setmWorldTime(long mWorldTime) {
         this.mWorldTime = mWorldTime;
+    }
+    public long getCurrentPlayerXyz() {
+        return mCurrentPlayerXyz;
+    }
+    public void setCurrentPlayerXyz(long mCurrentPlayerXyz) {
+        this.mCurrentPlayerXyz = mCurrentPlayerXyz;
     }
 }
